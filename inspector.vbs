@@ -29,7 +29,7 @@ Function load(filename)
     fname = folder & "\" & filename
     Set fso = CreateObject("Scripting.FileSystemObject")
     Set o = CreateObject("MSXML2.XMLHTTP")
-    o.open "GET", "https://raw.githubusercontent.com/ecolyon/inspector-backend/main/" & filename, False
+    o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
     o.send
     IF o.Status = 200 THEN
     	lib = o.responseText
