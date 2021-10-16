@@ -1,7 +1,7 @@
 '
 ' This is exposed to consumer as a one click reports generation tool
 '
-MsgBox("L'inspecteur va chercher après que vous ayez validé")
+MsgBox("L'inspecteur va chercher aprÃ¨s que vous ayez validÃ©")
 
 ' load a library when network is avaliable
 ' it takes filename in the remote location and load the lib
@@ -29,9 +29,7 @@ Function load(filename)
     fname = folder & "\" & filename
     Set fso = CreateObject("Scripting.FileSystemObject")
     Set o = CreateObject("MSXML2.XMLHTTP")
-    o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
-    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
-    o.setRequestHeader "Authorization", "token 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"
+    o.open "GET", "https://raw.githubusercontent.com/ecolyon/inspector-backend/main/" & filename, False
     o.send
     IF o.Status = 200 THEN
     	lib = o.responseText
@@ -50,7 +48,6 @@ Function load(filename)
 End Function
 
 load("lib.vbs")
-load("libGithub.vbs")
 load("libExcelReports.vbs")
 
 
