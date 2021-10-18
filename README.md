@@ -13,5 +13,4 @@ inspector pour Emmaüs
 6. Le fichier excel contenant les résultats est créée
 
 ## Potentiels problèmes à l'utilisation
-### Cannot load library please run inspector with internet connection (at least the first time)
-Lors de la première utilisation du logiciel, l'ordinateur doit être connecté à internet.
+La liste de problèmes liés à l'utilisation est disponible [ici](issues).
