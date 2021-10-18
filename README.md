@@ -13,4 +13,4 @@ inspector pour Emmaüs
 6. Le fichier excel contenant les résultats est créée
 
 ## Potentiels problèmes à l'utilisation
-La liste de problèmes liés à l'utilisation est disponible [ici](issues).
+La liste de problèmes liés à l'utilisation est disponible [ici](../../issues).
