@@ -1,6 +1,9 @@
 # Inspector
 inspector pour Emmaüs
 
+## Conditions d'utilisation
+1. L'ordinateur doit avoir [Excel 2007](https://www.microsoft.com/fr-ww/microsoft-365/previous-versions/microsoft-excel-2007) installé
+
 ## Comment l'utiliser
 1. Télécharger le logiciel [ici](https://raw.githubusercontent.com/emmausConnect/inspector/main/inspector.vbs).
 2. Mettre le fichier sur une clé USB
