@@ -31,7 +31,7 @@ Function load(filename)
     Set o = CreateObject("MSXML2.XMLHTTP")
     o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
     o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
-    o.setRequestHeader "Authorization", "token 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"
+    o.setRequestHeader "Authorization", "token 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"
     o.send
     IF o.Status = 200 THEN
     	lib = o.responseText
