@@ -1,60 +1,106 @@
 '
 ' This is exposed to consumer as a one click reports generation tool
 '
-MsgBox("L'inspecteur va chercher aprÃ¨s que vous ayez validÃ©")
+MsgBox("L'inspecteur va chercher après que vous ayez validé")
+
+Const F_CACHE = ".cache"
+
+' get name of a file in the cache
+Function cache(name)
+        Set oFSO = CreateObject("Scripting.FileSystemObject")
+
+        If Not oFSO.FolderExists(F_CACHE) Then
+          Set f = oFSO.CreateFolder(F_CACHE)
+          Dim rFSO
+          Set rFSO = CreateObject("Scripting.FileSystemObject")
+	  Set fdir = oFSO.GetFolder(F_CACHE)
+          fdir.Attributes = 2   
+        End If
+
+	cache = F_CACHE & "\" & name
+
+End Function
+
+' Fetch libs online first if needed
+Function fetchAllFirstIfNeeded()
+	Set oFSO = CreateObject("Scripting.FileSystemObject")
+
+        If Not oFSO.FolderExists(F_CACHE) Then
+		Dim arr(4), x
+		arr(0) = "lib"
+		arr(1) = "libReports"
+		arr(2) = "libExcelReports"
+		arr(3) = "libOpenOfficeReports"
+		arr(4) = "libCsvReports"
+		x = 0
+		Do While x<=UBound(arr)
+			IF VarType(fetch(arr(x)&".vbs"))=0 THEN
+				MsgBox "Cannot load library please run inspector without internet connection (at least the first time)" & vbCrLf & "Aborting ...", 16
+				wscript.Quit
+			END IF
+			x = x + 1
+		Loop
+	End IF
+End Function
+
+' Fetch resource online and put in cache if possible
+' Return the text of the resource or nothing in case of error
+Function fetch(filename)
+    Dim fname
+    fname = cache(filename)
+    Set o = CreateObject("MSXML2.XMLHTTP")
+    o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
+    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
+    o.setRequestHeader "Authorization", "token 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"
+    o.send
+    IF o.Status = 200 THEN
+	Set fso = CreateObject("Scripting.FileSystemObject")
+	Set file = fso.OpenTextFile(fname, 2, True)
+	file.Write(o.responseText)
+        fetch = o.responseText
+    END IF
+End Function
+
+' function fetch rarely eg 1 on 200 use of the function
+Function fetchRarely(filename)
+	Dim i
+	Randomize
+	i = Rnd()
+	if i < 0.005 THEN
+		fetchRarely = fetch(filename)
+	end if
+End Function
 
 ' load a library when network is avaliable
 ' it takes filename in the remote location and load the lib
 ' or abort with error
 Function load(filename)
-
-    ' create a cache folder in the local path for execution offline
-    Const folder = ".cache"
-    Const Overwrite = True
-    Dim oFSO
-    Set oFSO = CreateObject("Scripting.FileSystemObject")
-
-    If Not oFSO.FolderExists(folder) Then
-        Set f = oFSO.CreateFolder(folder)
-        Dim rFSO
-        Set rFSO = CreateObject("Scripting.FileSystemObject")
-	Set fdir = oFSO.GetFolder(folder)
-	fdir.Attributes = 2   
-    End If
-
     ' fetch library from remote if network is avaliable
-    Dim lib
-    Dim o
-    Dim fname
-    fname = folder & "\" & filename
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    Set o = CreateObject("MSXML2.XMLHTTP")
-    o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
-    o.send
-    IF o.Status = 200 THEN
-    	lib = o.responseText
-	Set file = fso.OpenTextFile(fname, 2, True)
-	file.Write(lib)
-    ELSE
-	IF fso.FileExists(fname) THEN
+    Dim lib, fname
+    lib = fetchRarely(filename)
+    IF VarType(lib)=0 THEN
+	fname = cache(filename)
+	Set fso = CreateObject("Scripting.FileSystemObject")
+        IF fso.FileExists(fname) THEN
 		Set file = fso.OpenTextFile(fname, 1)
 		lib = file.ReadAll
 	ELSE
-		MsgBox "Cannot load library please run inspector with internet connection (at least the first time)" & vbClRf & "Aborting ...", 16
+		MsgBox "Libraries are not loaded please retry with internet connection please", 16
 		wscript.Quit
 	END IF
     END IF
     executeGlobal lib
 End Function
 
+fetchAllFirstIfNeeded()
 load("lib.vbs")
 load("libReports.vbs")
 
 Dim outputFile
 outputFile = getOutputFile("reports")
 Set o = sheetOpenOrCreate(outputFile)
-	
-sheetUpdateOrNewEntryFromThisPC(o("sheet"))
+
+o("sheet") = sheetUpdateOrNewEntryFromThisPC(o("sheet"))
 sheetAutoFit(o("sheet"))
 sheetWrite o, outputFile
 sheetClose(o)
