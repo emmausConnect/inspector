@@ -1,46 +1,3 @@
-' Redim preserve on multidim arrays without out of range exception
-' array to copy
-' w new width
-' h new height
-Function ReDimPreserve(sheet, ph, pw)
-    Dim h, w
-    h = Max(ph, UBound(sheet, 1))
-    w = Max(pw, UBound(sheet, 2))
-    ReDim newSheet(h, w)
-    y = 0
-    Do While y<UBound(sheet, 1)
-        x = 0
-        Do While x<UBound(sheet, 2)
-            If x<w and y<h then
-                    newSheet(y, x) = sheet(y, x)
-                else
-                    newSheet(y, x) = 0
-                end if
-            x=x+1
-        Loop
-        y = y + 1
-    Loop
-    ReDim sheet(h, w)
-
-    y = 0
-    Do While y<UBound(sheet, 1)
-        x = 0
-        Do While x<UBound(sheet, 2)
-            sheet(y, x) = newSheet(y, x)
-            x=x+1
-        Loop
-        y = y + 1
-    Loop
-End Function
-
-Function Min(x, y)
-    If x < y Then Min = x Else Min = y
-End Function
-
-Function Max(x, y)
-    If x > y Then Max = x Else Max = y
-End Function
-
 ' get number of rows used in sheet 0..n-1
 Function usedRows(sheet, col)
     usedRows = UBound(sheet)
@@ -64,31 +21,6 @@ End Function
 ' Get filename with extension compatible with this lib
 Function getOutputFile(fname)
     getOutputFile = getCompatOutputFmt(fname, ".csv")
-End Function
-
-' Returns True if string in parameter is upper case
-Function IsUpper(s)
-    With CreateObject("VBScript.RegExp")
-        .Pattern = "^[^a-z]*$"
-        IsUpper = .test(s)
-    End With
-End Function
-
-' regexp replace
-Function reReplace(strString, strPattern, strReplace)
-    Dim oRegExp
-    Set oRegExp = New RegExp
-    oRegExp.Pattern = strPattern
-    reReplace = oRegExp.Replace(strString, strReplace)
-End Function
-
-' take a char in a string a returns its value
-Function charToNumberValue(s)
-    IF IsUpper(s) THEN
-        charToNumberValue = Asc(s)  - 65
-    ELSE
-        charToNumberValue = Asc(s) - 97
-    END IF
 End Function
 
 ' Create initial sheet of reports
@@ -149,9 +81,9 @@ Function sheetThisPCinSheet(sheet)
 
 	Dim y, res, value, position
 	res = -1
-	y = 0
+	y = 1
 	Do While y<=UBound(sheet)
-		position = positions("no_serie") & (y+1)
+		position = positions("no_serie") & y
 		value = csvGetValueForRange(sheet, position)
 		if value=serialNumber then
 			res = y
@@ -161,7 +93,7 @@ Function sheetThisPCinSheet(sheet)
 	Loop
 	sheetThisPCinSheet = res
 End Function
-
+	
 ' line 0..n-1 line from which to begin
 Function ggetCsv(sheet, line)
     Dim x, y, res
@@ -170,9 +102,10 @@ Function ggetCsv(sheet, line)
     Do While y<UBound(sheet,1)
         x = 0
         Do While x<=UBound(sheet,2)
-            res = res & sheet(y,x)
+            res = res & """" & sheet(y,x)
             x=x+1
-            if x<UBound(sheet, 2) then
+	    res = res & """"
+            if x<=UBound(sheet, 2) then
                 res = res & ","
             end if
         Loop
@@ -181,7 +114,7 @@ Function ggetCsv(sheet, line)
     Loop
     ggetCsv=res
 End Function
-
+	
 Function getTab(sheet) 
 	getTab = ggetTab(sheet,0)
 End Function
@@ -198,12 +131,6 @@ End Function
 Function getCsv(sheet)
     getCsv=ggetCsv(sheet,0)
 End Function
-
-sub assert( boolExpr, str )
-    if not boolExpr then
-        Err.Raise vbObjectError + 99999, , str
-    end if
-end sub
 
 ' get the array startCol endCol startRow endRow, they are all based 1..n
 Function rangeToArray(range)
@@ -227,6 +154,9 @@ Function sheetCreateRowFromArray(sheet, line, data)
     Dim keys, cell, cellv
     keys = positions.Keys()
     for i=0 to UBound(data)
+	if i>UBound(keys) then
+		Exit For
+	End If
         cell = positions(keys(i)) & line
         cellv = data(i)
         csvAddValueForRange sheet, cell, cellv
@@ -322,6 +252,11 @@ Function openExisting(fname)
 	Do While file.AtEndOfStream=False
 		line = file.ReadLine
 		arr = Split(line, ",")
+		x = 0
+		Do while x<UBound(arr)
+			arr(x)=Mid(arr(x),2,Len(arr(x))-2)
+			x=x+1
+		Loop
 		sheetCreateRow sheet, (file.Line-1), arr
 		y = y + 1
 	Loop
