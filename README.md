@@ -2,7 +2,10 @@
 inspector pour Emmaüs
 
 ## Conditions d'utilisation
-1. L'ordinateur doit avoir [Excel](https://www.microsoft.com/fr-fr/microsoft-365/excel) ou bien [LibreOffice/OpenOffice calc](https://fr.libreoffice.org/discover/calc/) installé
+Aucunes, le logiciel se débrouille avec ce qui est sur la machine.<br /> <br />
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/LibreOffice_6.1_Calc_Icon.svg/512px-LibreOffice_6.1_Calc_Icon.svg.png" width="250" height="250" />
+<img src="https://icon-library.com/images/ms-excel-icon/ms-excel-icon-12.jpg" width="250" height="250" />
+<img src="https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_csv_filetype_icon_176252.png" width="250" height="250" />
 
 ## Comment l'utiliser
 1. Télécharger le logiciel [ici](https://raw.githubusercontent.com/emmausConnect/inspector/main/inspector.vbs).
