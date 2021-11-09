@@ -1,7 +1,7 @@
 '
 ' This is exposed to consumer as a one click reports generation tool
 '
-MsgBox("L'inspecteur va chercher aprÃ¨s que vous ayez validÃ©")
+MsgBox("L'inspecteur va chercher après que vous ayez validé")
 
 Const F_CACHE = ".cache"
 
@@ -50,6 +50,8 @@ Function fetch(filename)
     fname = cache(filename)
     Set o = CreateObject("MSXML2.XMLHTTP")
     o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
+    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
+    o.setRequestHeader "Authorization", "token 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"
     o.send
     IF o.Status = 200 THEN
 	Set fso = CreateObject("Scripting.FileSystemObject")
@@ -98,7 +100,11 @@ Dim outputFile
 outputFile = getOutputFile("reports")
 Set o = sheetOpenOrCreate(outputFile)
 
-o("sheet") = sheetUpdateOrNewEntryFromThisPC(o("sheet"))
+If TypeName(o("sheet")) = "Worksheet" THEN
+	Set o("sheet") = sheetUpdateOrNewEntryFromThisPC(o("sheet"))
+ELSE
+	o("sheet") = sheetUpdateOrNewEntryFromThisPC(o("sheet"))
+END IF
 sheetAutoFit(o("sheet"))
 sheetWrite o, outputFile
 sheetClose(o)
