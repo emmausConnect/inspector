@@ -31,10 +31,10 @@ Function sheetCreateInital()
 
     Set w = objExcel.Workbooks.Add()
     w.Activate
-    With w
+	With w 
      .Title = "Tous les reconditionnements" 
      .Subject = "Reconditionnements"
-     .Author = "Emmaüs"
+     .Author = "EmmaÃ¼s"
     End With
 
     Set sheet = w.ActiveSheet
