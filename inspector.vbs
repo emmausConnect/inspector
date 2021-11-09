@@ -1,7 +1,7 @@
 '
 ' This is exposed to consumer as a one click reports generation tool
 '
-MsgBox("L'inspecteur va chercher après que vous ayez validé")
+MsgBox("L'inspecteur va chercher aprÃ¨s que vous ayez validÃ©")
 
 Const F_CACHE = ".cache"
 
@@ -50,8 +50,6 @@ Function fetch(filename)
     fname = cache(filename)
     Set o = CreateObject("MSXML2.XMLHTTP")
     o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
-    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
-    o.setRequestHeader "Authorization", "token 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"
     o.send
     IF o.Status = 200 THEN
 	Set fso = CreateObject("Scripting.FileSystemObject")
