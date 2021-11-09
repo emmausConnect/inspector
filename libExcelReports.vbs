@@ -17,7 +17,7 @@ End Function
 ' create a sheet row for the provided in a hashmap
 Function sheetCreateRowFromHashMap(sheet, line, map)
 	FOR EACH k IN map.Keys
-		sheet.Range(k&line).Value = map(k)
+		sheet.Range(k&line).Value = map(k) 
 	NEXT
 End Function
 
@@ -34,7 +34,7 @@ Function sheetCreateInital()
     With w
      .Title = "Tous les reconditionnements" 
      .Subject = "Reconditionnements"
-     .Author = "Emmaüs"
+     .Author = "EmmaÃ¼s"
     End With
 
     Set sheet = w.ActiveSheet
