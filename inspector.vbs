@@ -1,7 +1,7 @@
 '
 ' This is exposed to consumer as a one click reports generation tool
 '
-MsgBox("L'inspecteur va chercher après que vous ayez validé")
+MsgBox("L'inspecteur va chercher aprÃ¨s que vous ayez validÃ©")
 
 Const F_CACHE = ".cache"
 
@@ -107,6 +107,6 @@ ELSE
 END IF
 sheetAutoFit(o("sheet"))
 sheetWrite o, outputFile
-sheetClose(o)
+sheetClose(o) 
 
 MsgBox("L'inspection est finie")
