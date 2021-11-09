@@ -50,8 +50,6 @@ Function fetch(filename)
     fname = cache(filename)
     Set o = CreateObject("MSXML2.XMLHTTP")
     o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
-    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
-    o.setRequestHeader "Authorization", "token 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"
     o.send
     IF o.Status = 200 THEN
 	Set fso = CreateObject("Scripting.FileSystemObject")
