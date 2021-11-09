@@ -166,3 +166,77 @@ Function getNomComplet()
 	Next
 	getNomComplet = man & " " & model & " stockage " & Round(getDiskSpaceGo()) & "Go RAM " & Round(getInstalledRAMgo()) & "Go"
 End Function
+
+' Redim preserve on multidim arrays without out of range exception
+' array to copy
+' w new width
+' h new height
+Function ReDimPreserve(arr, ph, pw)
+    Dim h, w
+    h = Max(ph, UBound(arr, 1))
+    w = Max(pw, UBound(arr, 2))
+    ReDim newArr(h, w)
+    y = 0
+    Do While y<UBound(arr, 1)
+        x = 0
+        Do While x<UBound(arr, 2)
+            If x<w and y<h then
+                    newArr(y, x) = arr(y, x)
+                else
+                    newArr(y, x) = 0
+                end if
+            x=x+1
+        Loop
+        y = y + 1
+    Loop
+    ReDim arr(h, w)
+
+    y = 0
+    Do While y<UBound(arr, 1)
+        x = 0
+        Do While x<UBound(arr, 2)
+            arr(y, x) = newArr(y, x)
+            x=x+1
+        Loop
+        y = y + 1
+    Loop
+End Function
+
+Function Min(x, y)
+    If x < y Then Min = x Else Min = y
+End Function
+
+Function Max(x, y)
+    If x > y Then Max = x Else Max = y
+End Function
+
+' Returns True if string in parameter is upper case
+Function IsUpper(s)
+    With CreateObject("VBScript.RegExp")
+        .Pattern = "^[^a-z]*$"
+        IsUpper = .test(s)
+    End With
+End Function
+
+' regexp replace
+Function reReplace(strString, strPattern, strReplace)
+    Dim oRegExp
+    Set oRegExp = New RegExp
+    oRegExp.Pattern = strPattern
+    reReplace = oRegExp.Replace(strString, strReplace)
+End Function
+
+' take a char in a string a returns its value
+Function charToNumberValue(s)
+    IF IsUpper(s) THEN
+        charToNumberValue = Asc(s)  - 65
+    ELSE
+        charToNumberValue = Asc(s) - 97
+    END IF
+End Function
+
+sub assert( boolExpr, str )
+    if not boolExpr then
+        Err.Raise vbObjectError + 99999, , str
+    end if
+end sub
