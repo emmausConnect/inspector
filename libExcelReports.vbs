@@ -29,12 +29,12 @@ Function sheetCreateInital()
     Set objExcel = CreateObject("Excel.Application")
     objExcel.Visible = False
 
-	Set w = objExcel.Workbooks.Add() 
+    Set w = objExcel.Workbooks.Add()
     w.Activate
     With w
      .Title = "Tous les reconditionnements" 
      .Subject = "Reconditionnements"
-     .Author = "EmmaÃ¼s"
+     .Author = "Emmaüs"
     End With
 
     Set sheet = w.ActiveSheet
