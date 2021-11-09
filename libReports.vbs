@@ -224,8 +224,7 @@ If Err.Number <> 0 Then
 	Err.Clear
 	Set myObj = CreateObject("com.sun.star.ServiceManager")
 	If Err.Number <> 0 Then
-		MsgBox("Cannot proced you dont have software requirements ...")
-		wscript.Quit
+		load("libCsvReports.vbs")
 	Else
 		load("libOpenOfficeReports.vbs")
 	End If
