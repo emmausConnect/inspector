@@ -8,7 +8,7 @@ Aucunes, le logiciel se débrouille avec ce qui est sur la machine.<br /> <br />
 <img src="https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_csv_filetype_icon_176252.png" width="250" height="250" />
 
 ## Comment l'utiliser - version graphique
-![](https://user-images.githubusercontent.com/91908415/141842465-61142d96-9ded-4f43-afa5-648d2768c277.png)
+![](https://user-images.githubusercontent.com/91908415/141848177-3f16f451-9e68-4ab0-ba7c-82525dc19655.png)
 1. Télécharger le logiciel [ici](https://raw.githubusercontent.com/emmausConnect/inspector/main/inspector.hta).
 2. Mettre le fichier sur une clé USB
 3. Mettre la clé USB dans le PC à reconditionner
