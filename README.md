@@ -8,10 +8,10 @@ Aucunes, le logiciel se débrouille avec ce qui est sur la machine.<br /> <br />
 <img src="https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_csv_filetype_icon_176252.png" width="250" height="250" />
 
 ## Comment l'utiliser
-1. Télécharger le logiciel [ici](https://raw.githubusercontent.com/emmausConnect/inspector/main/inspector.vbs).
+1. Télécharger le logiciel [ici](https://raw.githubusercontent.com/emmausConnect/inspector/main/inspector.vbs) ou la version graphique [ici](https://raw.githubusercontent.com/emmausConnect/inspector/main/inspector.hta).
 2. Mettre le fichier sur une clé USB
 3. Mettre la clé USB dans le PC à reconditionner
-4. Lancer le logiciel en double cliquant sur ```inspector.vbs```
+4. Lancer le logiciel en double cliquant sur ```inspector.vbs``` (ou ```inspector.hta``` si vous choisissez la version graphique)
 5. Patienter quelques instants
 6. Le fichier excel contenant les résultats est créée
 
