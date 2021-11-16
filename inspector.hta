@@ -2,7 +2,7 @@
     	</head>
 	<body style="/* height: 100%; *//* align-items: center; *//* justify-content: center; *//* display: flex; */color: white;"><hta:application applicationname="Inspector" id="Inspector" icon=".cache/manifier.ico" style="
     height: 100%;
-">
+"> 
 	 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<style>
 		.startInspect {
@@ -98,7 +98,7 @@
                  </tr>
                  <tr>
                      <td colspan="2">
-                              <a name="startInspect" href="#" class="startInspect" onclick="startInspection()">DÃ©marrer l'inspection</a>  
+                              <a name="startInspect" href="#" class="startInspect" onclick="startInspection()">Démarrer l'inspection</a>  
                  </td>
                  </tr>
       </tbody></table>
@@ -171,6 +171,7 @@ End Function
 	    Set o = CreateObject("MSXML2.XMLHTTP")
 	    o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
 	    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
+	    
 	    o.send
 	    IF o.Status = 200 THEN
 		Set fso = CreateObject("Scripting.FileSystemObject")
@@ -245,9 +246,9 @@ End Function
 		sheetWrite o, outputFile
 		sheetClose(o)
 
-		StartInspectText "Inspection terminÃ©e"
+		StartInspectText "Inspection terminée"
 		
-		StartInspectText "DÃ©marrer l'inspection"
+		StartInspectText "Démarrer l'inspection"
 
 	End Function
 	
