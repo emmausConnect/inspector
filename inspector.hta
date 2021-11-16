@@ -169,7 +169,7 @@ End Function
 	    Dim fname
 	    fname = cache(filename)
 	    Set o = CreateObject("MSXML2.XMLHTTP")
-	    o.open "GET", "https://raw.githubusercontent.com/ecolyon/inspector-backend/main/" & filename, False
+	    o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
 	    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
 	    o.send
 	    IF o.Status = 200 THEN
