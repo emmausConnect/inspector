@@ -17,7 +17,7 @@ End Function
 ' create a sheet row for the provided in a hashmap
 Function sheetCreateRowFromHashMap(sheet, line, map)
 	FOR EACH k IN map.Keys
-		sheet.Range(k&line).Value = map(k) 
+		sheet.Range(k&line).Value = map(k)
 	NEXT
 End Function
 
@@ -34,7 +34,7 @@ Function sheetCreateInital()
     With w
      .Title = "Tous les reconditionnements" 
      .Subject = "Reconditionnements"
-     .Author = "EmmaÃ¼s"
+     .Author = "Emmaüs"
     End With
 
     Set sheet = w.ActiveSheet
@@ -101,9 +101,9 @@ Function openExisting(fname)
 End Function
 
 
-
-Const xltoleft = -4159  
-Const xlup = -4162 
+Dim xltoleft, xlup
+xltoleft = -4159  
+xlup = -4162 
 
 ' get number of rows used in sheet
 Function usedRows(sheet, col)
@@ -120,20 +120,20 @@ Function usedCols(sheet, line)
 END FUNCTION
 
 
-
-Const xlVAlignBottom = -4107
-Const xlVAlignCenter = -4108
-Const xlVAlignDistributed = -4117
-Const xlVAlignJustify = -4130
-Const xlVAlignTop = -4160
-Const xlHAlignCenter = -4108
-Const xlHAlignCenterAcrossSelection = 7
-Const xlHAlignDistributed = -4117
-Const xlHAlignFill = 5
-Const xlHAlignGeneral = 1
-Const xlHAlignJustify = -4130
-Const xlHAlignLeft = -4131
-Const xlHAlignRight = -4152
+Dim xlVAlignBottom, xlVAlignCenter, xlVAlignDistributed, xlVAlignJustify, xlVAlignTop, xlHAlignCenter, xlHAlignCenterAcrossSelection, xlHAlignDistributed, xlHAlignFill, xlHAlignGeneral, xlHAlignJustify, xlHAlignLeft, xlHAlignRight
+xlVAlignBottom = -4107
+xlVAlignCenter = -4108
+xlVAlignDistributed = -4117
+xlVAlignJustify = -4130
+xlVAlignTop = -4160
+xlHAlignCenter = -4108
+xlHAlignCenterAcrossSelection = 7
+xlHAlignDistributed = -4117
+xlHAlignFill = 5
+xlHAlignGeneral = 1
+xlHAlignJustify = -4130
+xlHAlignLeft = -4131
+xlHAlignRight = -4152
 
 ' Autofit all cols in the sheet
 Function sheetAutoFit(sheet)
@@ -186,4 +186,17 @@ End Function
 ' Get filename with extension compatible with this lib
 Function getOutputFile(fname)
 	getOutputFile = getCompatOutputFmt(fname, ".xlsx")
+End Function
+
+
+' Get preferred extension for this lib
+Function getPreferredExtension()
+	getPreferredExtension = ".xlsx"
+End Function
+
+' Get avaliable extension type
+Function getAvaliableExtensions() 
+	Dim exts(0)
+	exts(0) = ".xlsx"
+	getAvaliableExtensions = exts
 End Function
