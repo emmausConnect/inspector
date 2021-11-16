@@ -1,6 +1,6 @@
 
 
-Const F_CACHE = ".cache"
+Const F_CACHE = ".cache" 
 
 ' get name of a file in the cache
 Function cache(name)
@@ -102,7 +102,7 @@ outputFile = getOutputFile(outputFilename)
 
 
 
-MsgBox("L'inspecteur va chercher après que vous validez")
+MsgBox("L'inspecteur va chercher aprÃ¨s que vous validez")
 
 Set o = sheetOpenOrCreate(outputFile)
 
@@ -115,7 +115,7 @@ sheetAutoFit(o("sheet"))
 sheetWrite o, outputFile
 sheetClose(o)
 
-MsgBox("Inspection terminée")
+MsgBox("Inspection terminÃ©e")
 
 
 
