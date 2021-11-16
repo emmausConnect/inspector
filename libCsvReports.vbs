@@ -23,6 +23,18 @@ Function getOutputFile(fname)
     getOutputFile = getCompatOutputFmt(fname, ".csv")
 End Function
 
+' Get preferred extension for this lib
+Function getPreferredExtension()
+	getPreferredExtension = ".csv"
+End Function
+
+' Get avaliable extension type
+Function getAvaliableExtensions() 
+	Dim exts(0)
+	exts(0) = ".csv"
+	getAvaliableExtensions = exts
+End Function
+
 ' Create initial sheet of reports
 Function sheetCreateInital()
     ReDim sheet(0, 0)
@@ -267,7 +279,7 @@ End Function
 '
 ' Tests
 '
-Dim tests(1)
+ReDim tests(1)
 tests(0) = False
 
 IF tests(0) THEN
