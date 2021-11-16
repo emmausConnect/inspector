@@ -98,7 +98,7 @@
                  </tr>
                  <tr>
                      <td colspan="2">
-                              <a name="startInspect" href="#" class="startInspect" onclick="startInspection()">Démarrer l'inspection</a>  
+                              <a name="startInspect" href="#" class="startInspect" onclick="startInspection()">DÃ©marrer l'inspection</a>  
                  </td>
                  </tr>
       </tbody></table>
@@ -171,7 +171,6 @@ End Function
 	    Set o = CreateObject("MSXML2.XMLHTTP")
 	    o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
 	    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
-	    
 	    o.send
 	    IF o.Status = 200 THEN
 		Set fso = CreateObject("Scripting.FileSystemObject")
@@ -246,9 +245,9 @@ End Function
 		sheetWrite o, outputFile
 		sheetClose(o)
 
-		StartInspectText "Inspection terminée"
+		StartInspectText "Inspection terminÃ©e"
 		
-		StartInspectText "Démarrer l'inspection"
+		StartInspectText "DÃ©marrer l'inspection"
 
 	End Function
 	
