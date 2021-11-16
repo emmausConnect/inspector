@@ -1,6 +1,6 @@
 
 
-Const F_CACHE = ".cache" 
+Const F_CACHE = ".cache"
 
 ' get name of a file in the cache
 Function cache(name)
@@ -48,6 +48,7 @@ Function fetch(filename)
   Set o = CreateObject("MSXML2.XMLHTTP")
   o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
   o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
+  
   o.send
   IF o.Status = 200 THEN
     Set fso = CreateObject("Scripting.FileSystemObject")
@@ -101,7 +102,7 @@ outputFile = getOutputFile(outputFilename)
 
 
 
-MsgBox("L'inspecteur va chercher aprÃ¨s que vous validez")
+MsgBox("L'inspecteur va chercher après que vous validez")
 
 Set o = sheetOpenOrCreate(outputFile)
 
@@ -114,7 +115,7 @@ sheetAutoFit(o("sheet"))
 sheetWrite o, outputFile
 sheetClose(o)
 
-MsgBox("Inspection terminÃ©e")
+MsgBox("Inspection terminée")
 
 
 
