@@ -4,7 +4,7 @@
 
 
 ' Create a row in the given by getPositionsIndex
-Function sheetCreateRowFromArray(sheet, line, data) 
+Function sheetCreateRowFromArray(sheet, line, data)  
 	Dim keys, cell, cellv
         keys = positions.Keys()
        for i=0 to UBound(data)
@@ -34,7 +34,7 @@ Function sheetCreateInital()
     With w
      .Title = "Tous les reconditionnements" 
      .Subject = "Reconditionnements"
-     .Author = "Emmaüs"
+     .Author = "EmmaÃ¼s"
     End With
 
     Set sheet = w.ActiveSheet
