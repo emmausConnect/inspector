@@ -1,6 +1,6 @@
 ' Generic function to create reports this lib must be used with a particular implementation (eg: excel)
 Dim positions 
-Set positions = getPositionsIndex() 
+Set positions = getPositionsIndex()
 
 ' Get order of items in the row
 Function getPositionsIndex()
@@ -65,49 +65,49 @@ Function getTitlesMap()
     titles.Add positions("identification"), "Identification"
     titles.Add positions("status"), "Statut"
     titles.Add positions("nom_complet"), "Nom complet"
-    titles.Add positions("derniere_maj"), "Date de derniÃ¨re maj"
-    ' MatÃ©riel
-    titles.Add positions("type_materiel"), "Type matÃ©riel"
+    titles.Add positions("derniere_maj"), "Date de dernière maj"
+    ' Matériel
+    titles.Add positions("type_materiel"), "Type matériel"
     titles.Add positions("marque"), "Marque"
-    titles.Add positions("modele"), "ModÃ¨le"
-    titles.Add positions("os"), "SystÃ¨me d'exploitation"
-    titles.Add positions("no_serie"), "NumÃ©ro de sÃ©rie"	
+    titles.Add positions("modele"), "Modèle"
+    titles.Add positions("os"), "Système d'exploitation"
+    titles.Add positions("no_serie"), "Numéro de série"	
     ' DON
-    titles.Add positions("date_crea_fiche_teck"), "Date de crÃ©ation fiche technique"
-    titles.Add positions("cree_par"), "CrÃ©Ã©e par"
+    titles.Add positions("date_crea_fiche_teck"), "Date de création fiche technique"
+    titles.Add positions("cree_par"), "Créée par"
     titles.Add positions("donateur"), "Donateur"
-    titles.Add positions("coord_donateur"), "CoordonnÃ©es Contact Donateur"
-    titles.Add positions("date_recpt_don"), "Date de rÃ©ception du don"
+    titles.Add positions("coord_donateur"), "Coordonnées Contact Donateur"
+    titles.Add positions("date_recpt_don"), "Date de réception du don"
     titles.Add positions("comment_don"), "Commentaire sur le don"
-    ' CatÃ©gorisation et calcul du prix de vente
+    ' Catégorisation et calcul du prix de vente
     titles.Add positions("cpu"), "Processeur complet"
     titles.Add positions("cpu_indice"), "Indice CPU"
-    titles.Add positions("mem"), "MÃ©moire (en Go)"
+    titles.Add positions("mem"), "Mémoire (en Go)"
     titles.Add positions("type_disk"), "Type disque"
     titles.Add positions("size_disk"), "Taille disque (en Go)"
     titles.Add positions("note_audit"), "Note Audit"
-    titles.Add positions("pond_teck"), "PondÃ©ration +/- technique"
-    titles.Add positions("pond_aspect"), "PondÃ©ration +/- Aspect"
+    titles.Add positions("pond_teck"), "Pondération +/- technique"
+    titles.Add positions("pond_aspect"), "Pondération +/- Aspect"
     titles.Add positions("total"), "Total"
-    titles.Add positions("cat_vente_calculee"), "CatÃ©gorie de vente calculÃ©e"
-    titles.Add positions("prix_vente_calculee"), "Prix de vente calculÃ©"
+    titles.Add positions("cat_vente_calculee"), "Catégorie de vente calculée"
+    titles.Add positions("prix_vente_calculee"), "Prix de vente calculé"
     titles.Add positions("comm_prix"), "Commentaire Prix"
     ' suivit reconditionnement
-    titles.Add positions("benevole_charge_recond"), "BÃ©nÃ©vole en charge du reconditionnement"
+    titles.Add positions("benevole_charge_recond"), "Bénévole en charge du reconditionnement"
     titles.Add positions("recond_hors_pa"), "Reconditionnement hors PA"
     titles.Add positions("date_pa"), "Date de prise en charge"
     titles.Add positions("comm_recond"), "Commentaire sur le recond."
-    titles.Add positions("utilisation_cle_win_10"), "Utilisation d'une clÃ© de licence Windows 10"
-    titles.Add positions("ctrl_connect"), "ContrÃ´le Connectique"
-    titles.Add positions("eff_donnees"), "Effacement des donnÃ©es"
+    titles.Add positions("utilisation_cle_win_10"), "Utilisation d'une clé de licence Windows 10"
+    titles.Add positions("ctrl_connect"), "Contrôle Connectique"
+    titles.Add positions("eff_donnees"), "Effacement des données"
     ' vente
-    titles.Add positions("dispo_vente_se"), "Disponible Ã  la vente SE (O/N)"
+    titles.Add positions("dispo_vente_se"), "Disponible à la vente SE (O/N)"
     titles.Add positions("date_vente"), "Date de la vente"
     titles.Add positions("comm_vente"), "Commentaire vente"
     ' fiche technique
-    titles.Add positions("taille_ecran"), "Taille Ã©cran"
+    titles.Add positions("taille_ecran"), "Taille écran"
     titles.Add positions("alim_chargeur"), "Alim. chargeur"
-    titles.Add positions("cap_res_bat"), "CapacitÃ© rÃ©siduelle Batterie (%)"
+    titles.Add positions("cap_res_bat"), "Capacité résiduelle Batterie (%)"
     titles.Add positions("auto_bat"), "Autonomie Batterie (Min)"
     titles.Add positions("bluetooth"), "Bluetooth (Pres Abs KO)"
     titles.Add positions("webcam"), "Webcam (Pres Abs KO)"
