@@ -16,16 +16,17 @@ Function sheetCreateRowFromHashMap(sheet, line, map)
 	NEXT
 End Function
 
-const FontWeightDONTKNOW = 0.000000 'The font weight is not specified/known.
-const FontWeightTHIN = 50.000000 'specifies a 50% font weight.
-const FontWeightULTRALIGHT = 60.000000 'specifies a 60% font weight.
-const FontWeightLIGHT = 75.000000 'specifies a 75% font weight.
-const FontWeightSEMILIGHT = 90.000000 'specifies a 90% font weight.
-const FontWeightNORMAL = 100.000000 'specifies a normal font weight.
-const FontWeightSEMIBOLD = 110.000000 'specifies a 110% font weight.
-const FontWeightBOLD = 150.000000 'specifies a 150% font weight.
-const FontWeightULTRABOLD = 175.000000 'specifies a 175% font weight.
-const FontWeightBLACK = 200.000000 'specifies a 200% font weight.
+Dim FontWeightDONTKNOW, FontWeightTHIN, FontWeightULTRALIGHT, FontWeightLIGHT, FontWeightSEMILIGHT, FontWeightNORMAL, FontWeightSEMIBOLD, FontWeightBOLD, FontWeightULTRABOLD, FontWeightBLACK
+FontWeightDONTKNOW = 0.000000 'The font weight is not specified/known.
+FontWeightTHIN = 50.000000 'specifies a 50% font weight.
+FontWeightULTRALIGHT = 60.000000 'specifies a 60% font weight.
+FontWeightLIGHT = 75.000000 'specifies a 75% font weight.
+FontWeightSEMILIGHT = 90.000000 'specifies a 90% font weight.
+FontWeightNORMAL = 100.000000 'specifies a normal font weight.
+FontWeightSEMIBOLD = 110.000000 'specifies a 110% font weight.
+FontWeightBOLD = 150.000000 'specifies a 150% font weight.
+FontWeightULTRABOLD = 175.000000 'specifies a 175% font weight.
+FontWeightBLACK = 200.000000 'specifies a 200% font weight.
 
 ' Create initial sheet of reports
 'https://www.openoffice.org/api/docs/common/ref/com/sun/star/frame/Desktop.html
@@ -103,7 +104,7 @@ End Function
 
 ' get number of columns used in sheet
 Function usedCols(sheet, line)
-	Set oCursor = o("sheet").createCursor()
+	Set oCursor = sheet.createCursor()
 	oCursor.gotoEndOfUsedArea(True)
 	Set oColumns = oCursor.getColumns()
 	usedCols = oColumns.getCount()
@@ -111,22 +112,23 @@ END FUNCTION
 
 ' get number of rows used in sheet
 Function usedRows(sheet, col)
-	Set oCursor = o("sheet").createCursor()
+	Set oCursor = sheet.createCursor()
 	oCursor.gotoEndOfUsedArea(True)
 	Set oRows = oCursor.getRows()
 	usedRows = oRows.getCount()
 End Function
 
-Const CellHoriJustifySTANDARD = 0 'default alignment is used (left for numbers, right for text).  
-Const CellHoriJustifyLEFT = 1 'contents are aligned to the left edge of the cell.  
-Const CellHoriJustifyCENTER = 2 'contents are horizontally centered.  
-Const CellHoriJustifyRIGHT = 3 'contents are aligned to the right edge of the cell.  
-Const CellHoriJustifyBLOCK = 4 'contents are justified to the cell width.  
-Const CellHoriJustifyREPEAT = 5 'contents are repeated to fill the cell.
-Const CellVertJustifySTANDARD = 0 'default alignment is used.  
-Const CellVertJustifyTOP = 1 'contents are aligned with the upper edge of the cell.  
-Const CellVertJustifyCENTER = 2 'contents are aligned to the vertical middle of the cell.  
-Const CellVertJustifyBOTTOM = 3 'contents are aligned to the lower edge of the cell.  
+Dim CellHoriJustifySTANDARD, CellHoriJustifyLEFT, CellHoriJustifyCENTER, CellHoriJustifyRIGHT, CellHoriJustifyBLOCK, CellHoriJustifyREPEAT, CellVertJustifySTANDARD, CellVertJustifyTOP, CellVertJustifyCENTER, CellVertJustifyBOTTOM
+CellHoriJustifySTANDARD = 0 'default alignment is used (left for numbers, right for text).  
+CellHoriJustifyLEFT = 1 'contents are aligned to the left edge of the cell.  
+CellHoriJustifyCENTER = 2 'contents are horizontally centered.  
+CellHoriJustifyRIGHT = 3 'contents are aligned to the right edge of the cell.  
+CellHoriJustifyBLOCK = 4 'contents are justified to the cell width.  
+CellHoriJustifyREPEAT = 5 'contents are repeated to fill the cell.
+CellVertJustifySTANDARD = 0 'default alignment is used.  
+CellVertJustifyTOP = 1 'contents are aligned with the upper edge of the cell.  
+CellVertJustifyCENTER = 2 'contents are aligned to the vertical middle of the cell.  
+CellVertJustifyBOTTOM = 3 'contents are aligned to the lower edge of the cell.  
 
 ' Autofit all cols in the sheet
 Function sheetAutoFit(sheet)
@@ -190,4 +192,17 @@ End Function
 ' Get filename with extension compatible with this lib
 Function getOutputFile(fname)
 	getOutputFile = getCompatOutputFmt(fname, ".ods")
+End Function
+
+
+' Get preferred extension for this lib
+Function getPreferredExtension()
+	getPreferredExtension = ".ods"
+End Function
+
+' Get avaliable extension type
+Function getAvaliableExtensions() 
+	Dim exts(0)
+	exts(0) = ".ods"
+	getAvaliableExtensions = exts
 End Function
