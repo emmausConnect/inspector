@@ -1,4 +1,4 @@
-
+﻿
 
 
 
@@ -34,7 +34,7 @@ Function sheetCreateInital()
     With w
      .Title = "Tous les reconditionnements" 
      .Subject = "Reconditionnements"
-     .Author = "Emma�s"
+     .Author = "Emmaüs"
     End With
 
     Set sheet = w.ActiveSheet
