@@ -1,4 +1,4 @@
-' Create a row in the given by getPositionsIndex
+﻿' Create a row in the given by getPositionsIndex
 Function sheetCreateRowFromArray(sheet, line, data) 
        Dim keys, cell, cellv
        keys = positions.Keys()
