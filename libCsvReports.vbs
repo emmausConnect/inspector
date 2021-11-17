@@ -1,4 +1,4 @@
-﻿' get number of rows used in sheet 0..n-1
+' get number of rows used in sheet 0..n-1
 Function usedRows(sheet, col)
     usedRows = UBound(sheet)
 END FUNCTION
