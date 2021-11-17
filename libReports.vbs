@@ -1,4 +1,4 @@
-ï»¿' Generic function to create reports this lib must be used with a particular implementation (eg: excel)
+¿' Generic function to create reports this lib must be used with a particular implementation (eg: excel)
 Dim positions 
 Set positions = getPositionsIndex()
 
