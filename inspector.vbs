@@ -1,4 +1,4 @@
-ï»¿
+¿
 
 Const F_CACHE = ".cache"
 
