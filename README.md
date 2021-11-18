@@ -23,6 +23,7 @@ Aucunes, le logiciel se débrouille avec ce qui est sur la machine.<br /> <br />
 ![11](https://user-images.githubusercontent.com/92113596/142274832-b677d0f2-c2ae-4342-8c8e-af644d5a4b66.png)
 ![error1](https://user-images.githubusercontent.com/92113596/142274833-7f8f424e-5ec1-440d-b2e1-ffff817dcce2.png)
 -->
+1. Télécharger le logiciel [ici](https://raw.githubusercontent.com/emmausConnect/inspector/main/inspector.hta).
 2. Mettre le fichier sur une clé USB
 3. Mettre la clé USB dans le PC à reconditionner
 4. Lancer le logiciel en double cliquant sur ```inspector.hta```
@@ -41,3 +42,6 @@ Aucunes, le logiciel se débrouille avec ce qui est sur la machine.<br /> <br />
 
 ## Potentiels problèmes à l'utilisation
 La liste de problèmes liés à l'utilisation est disponible [ici](../../issues).
+
+## Besoin de plus de détails ?
+Allez faire un tour sur le [wiki](https://github.com/emmausConnect/inspector/wiki) de l'inspecteur.
