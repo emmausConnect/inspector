@@ -33,6 +33,16 @@ Aucunes, le logiciel se débrouille avec ce qui est sur la machine.<br /> <br />
 8. Le fichier contenant les résultats est créée
 
 ## Comment l'utiliser - version non graphique
+<!--
+![1](https://user-images.githubusercontent.com/92113596/142456824-c13be629-f7dd-4a4f-b619-35d4eb77104c.png)
+![2](https://user-images.githubusercontent.com/92113596/142456831-dbda6e17-7301-4464-80b6-d7062c237dc6.png)
+![3](https://user-images.githubusercontent.com/92113596/142456835-3e367edf-b2cc-48b6-b58c-cd280a56dd91.png)
+![4](https://user-images.githubusercontent.com/92113596/142456836-ce8608d7-dea6-4e34-a2cd-b3fdc231f45c.png)
+![5](https://user-images.githubusercontent.com/92113596/142459743-f7bb87e7-f3bc-4628-9106-7662bb1830d7.png)
+![6](https://user-images.githubusercontent.com/92113596/142459746-3cffe0d6-c1cb-40a6-91b2-1da6ad1da992.png)
+![7](https://user-images.githubusercontent.com/92113596/142459749-de52248e-e8b0-408a-a64e-53320624d856.png)
+![9](https://user-images.githubusercontent.com/92113596/142459751-5ba04a79-2ad1-4840-b366-615dfc3a1c2b.png)
+-->
 1. Télécharger le logiciel [ici](https://raw.githubusercontent.com/emmausConnect/inspector/main/inspector.vbs).
 2. Mettre le fichier sur une clé USB
 3. Mettre la clé USB dans le PC à reconditionner
