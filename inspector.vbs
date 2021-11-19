@@ -23,12 +23,13 @@ Function fetchAllFirstIfNeeded()
   Set oFSO = CreateObject("Scripting.FileSystemObject")
 
   If Not oFSO.FolderExists(F_CACHE) Then
-    Dim arr(4), x
+    Dim arr(5), x
     arr(0) = "lib.vbs"
     arr(1) = "libReports.vbs"
     arr(2) = "libExcelReports.vbs"
     arr(3) = "libOpenOfficeReports.vbs"
     arr(4) = "libCsvReports.vbs"
+    arr(5) = "libPlanMakerReports.vbs"
     x = 0
     Do While x<=UBound(arr)
       IF VarType(fetch(arr(x)))=0 THEN
