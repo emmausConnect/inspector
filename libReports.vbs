@@ -1,4 +1,4 @@
-﻿' Generic function to create reports this lib must be used with a particular implementation (eg: excel)
+' Generic function to create reports this lib must be used with a particular implementation (eg: excel)
 Dim positions 
 Set positions = getPositionsIndex()
 
@@ -217,6 +217,7 @@ Function getCompatOutputFmt(fname, destExt)
 	getCompatOutputFmt = Replace(getCompatOutputFmt, ".ods", destExt)
 	getCompatOutputFmt = Replace(getCompatOutputFmt, ".csv", destExt)
 	getCompatOutputFmt = Replace(getCompatOutputFmt, ".xlsx", destExt)
+	getCompatOutputFmt = Replace(getCompatOutputFmt, ".pmdx", destExt)
 	getCompatOutputFmt = Replace(getCompatOutputFmt, destExt & destExt, destExt)
 End Function
 
@@ -239,6 +240,13 @@ Function getAvaliableFormats()
 		ReDim Preserve fmts(UBound(fmts)+1)
 		fmts(UBound(fmts)) = "ods"
 	End If
+	Err.Clear
+	Set myObj = CreateObject("PlanMaker.Application")
+	If Err.Number <> 0 Then
+	Else
+		ReDim Preserve fmts(UBound(fmts)+1)
+		fmts(UBound(fmts)) = "pmdx"
+	End If
 	 getAvaliableFormats = fmts
 End Function
 
@@ -248,6 +256,7 @@ Function loadBackendForExtension(extname)
 	lst.Add "csv", "libCsvReports.vbs"
 	lst.Add "ods", "libOpenOfficeReports.vbs"
 	lst.Add "xlsx", "libExcelReports.vbs"
+	lst.Add "pmdx", "libPlanMakerReports.vbs"
 	load(lst(extname))
 End Function
 
@@ -261,7 +270,13 @@ Function loadPreferedBackend()
 		Err.Clear
 		Set myObj = CreateObject("com.sun.star.ServiceManager")
 		If Err.Number <> 0 Then
-			load("libCsvReports.vbs")
+			Err.Clear
+			Set myObj = CreateObject("PlanMaker.Application")
+			If Err.Number <> 0 Then
+				load("libCsvReports.vbs")
+			Else
+				load("libPlanMakerReports.vbs")
+			End If
 		Else
 			load("libOpenOfficeReports.vbs")
 		End If
