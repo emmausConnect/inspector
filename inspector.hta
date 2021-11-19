@@ -1,4 +1,4 @@
-﻿<html dir="ltr" style="height: 100%;" lang="en" class=""><head>
+<html dir="ltr" style="height: 100%;" lang="en" class=""><head>
     	</head>
 	<body style="/* height: 100%; *//* align-items: center; *//* justify-content: center; *//* display: flex; */color: white;"><hta:application applicationname="Inspector" id="Inspector" icon=".cache/manifier.ico" style="
     height: 100%;
@@ -146,12 +146,13 @@ End Function
 		Set oFSO = CreateObject("Scripting.FileSystemObject")
 
 		If Not oFSO.FolderExists(F_CACHE) Then
-			Dim arr(4), x
+			Dim arr(5), x
 			arr(0) = "lib.vbs"
 			arr(1) = "libReports.vbs"
 			arr(2) = "libExcelReports.vbs"
 			arr(3) = "libOpenOfficeReports.vbs"
 			arr(4) = "libCsvReports.vbs"
+	  		arr(5) = "libPlanMakerReports.vbs"
 			x = 0
 			Do While x<=UBound(arr)
 				IF VarType(fetch(arr(x)))=0 THEN
