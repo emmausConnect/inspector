@@ -3,10 +3,10 @@ inspector pour Emmaüs
 
 ## Conditions d'utilisation
 Aucunes, le logiciel se débrouille avec ce qui est sur la machine.<br /> <br />
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/LibreOffice_6.1_Calc_Icon.svg/512px-LibreOffice_6.1_Calc_Icon.svg.png" width="250" height="250" />
-<img src="https://icon-library.com/images/ms-excel-icon/ms-excel-icon-12.jpg" width="250" height="250" />
-<img src="https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_csv_filetype_icon_176252.png" width="250" height="250" />
-
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/LibreOffice_6.1_Calc_Icon.svg/512px-LibreOffice_6.1_Calc_Icon.svg.png" width="200" height="200" />
+<img src="https://icon-library.com/images/ms-excel-icon/ms-excel-icon-12.jpg" width="200" height="200" />
+<img src="https://cdn.icon-icons.com/icons2/2753/PNG/512/ext_csv_filetype_icon_176252.png" width="200" height="200" />
+<img src="https://www.softmaker.com/images/smo/icons/planmaker_128.png" width="200" height="200" />
 ## Comment l'utiliser - version graphique
 ![](https://user-images.githubusercontent.com/91908415/141848177-3f16f451-9e68-4ab0-ba7c-82525dc19655.png)
 <!--
