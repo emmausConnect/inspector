@@ -37,15 +37,16 @@ End Function
 
 ' Create initial sheet of reports
 Function sheetCreateInital()
+    Set titles = getBigTitles()
     ReDim sheet(0, 0)
     Set props = CreateObject("Scripting.Dictionary")
-    csvAddValueForRange sheet, "A1", "SUIVI"
-    csvAddValueForRange sheet, "E1", "MATERIEL"
-    csvAddValueForRange sheet, "J1", "DON"
-    csvAddValueForRange sheet, "P1", "CATEGORISATION ET CALCUL DU PRIX DE VENTE"
-    csvAddValueForRange sheet, "AB1", "SUIVI DU RECONDITIONNEMENT"
-    csvAddValueForRange sheet, "AI1", "VENTE"
-    csvAddValueForRange sheet, "AL1", "FICHE TECHNIQUE"
+    csvAddValueForRange sheet, "A1", titles("suivi")("text")
+    csvAddValueForRange sheet, "E1", titles("material")("text")
+    csvAddValueForRange sheet, "J1", titles("don")("text")
+    csvAddValueForRange sheet, "P1", titles("cat")("text")
+    csvAddValueForRange sheet, "AB1", titles("suivi_recon")("text")
+    csvAddValueForRange sheet, "AI1", titles("vente")("text")
+    csvAddValueForRange sheet, "AL1", titles("teck")("text")
 
     sheetCreateRow sheet, 2, getTitlesMap()
 
