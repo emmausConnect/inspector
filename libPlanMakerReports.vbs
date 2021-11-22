@@ -108,9 +108,29 @@ smoColorIndexBrown = 13 ' Brown
 smoColorIndexDarkGray = 14 ' Dark gray
 smoColorIndexLightGray = 15 ' Light gray
 
+' Apply bgr to all titles type
+Function convertBigTitlesToBGR(titles)
+	FOR EACH k IN titles
+		titles(k)("bg") = convertBigTitleToBGR(titles(k)("bg"))
+		titles(k)("text.color") = convertBigTitleToBGR(titles(k)("text.color"))
+	NEXT
+	Set convertBigTitlesToBGR = titles
+End Function
+
+' Convert from hex rgb to vbscript rgb
+Function convertBigTitleToBGR(color)
+	Dim r, g, b
+	r = RightShift((color And ((2^24)-1)), 16)
+	g = RightShift((color And ((2^16)-1)), 8)
+	b = (color And ((2^8)-1))
+	convertBigTitleToBGR = LeftShift(b, 16) + LeftShift(g, 8) + r
+End Function
+
 ' Create initial sheet of reports
 ' http://www.softmaker.net/down/bm2010manual_en.pdf
 Function sheetCreateInital()
+    Set titles = getBigTitles()
+    convertBigTitlesToBGR(titles)
     Set props = CreateObject("Scripting.Dictionary")
     Set pm = CreateObject("PlanMaker.Application")
     pm.Visible = False
@@ -119,52 +139,52 @@ Function sheetCreateInital()
     w.Activate
 
     With w
-     .BuiltInDocumentProperties("Title") = "Tous les reconditionnements"
-     .BuiltInDocumentProperties("Subject") = "Reconditionnements"
-     .BuiltInDocumentProperties("Author") = "Emmaüs"
+     .BuiltInDocumentProperties("Title") = getSheetTitle()
+     .BuiltInDocumentProperties("Subject") = getSheetSubject()
+     .BuiltInDocumentProperties("Author") = getSheetAuthor()
     End With
 
     Set sheet = w.ActiveSheet
     Set r = sheet.Range("A1:D1")
     r.MergeCells = True
-    r.Value = "SUIVI"
+    r.Value = titles("suivi")("text")
     r.Shading.BackgroundPatternColorIndex = smoColorIndexDarkGray
     r.Shading.ForegroundPatternColorIndex = smoColorIndexDarkGray
     r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("E1:I1")
     r.MergeCells = True
-    r.Value = "MATERIEL"
+    r.Value = titles("material")("text")
     r.Shading.BackgroundPatternColorIndex = smoColorIndexBlue
     r.Shading.ForegroundPatternColorIndex = smoColorIndexBlue
     r.Shading.Texture = 13
     r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("J1:O1")
     r.MergeCells = True
-    r.Value = "DON"
+    r.Value = titles("don")("text")
     r.Shading.BackgroundPatternColorIndex = smoColorIndexDarkGreen
     r.Shading.ForegroundPatternColorIndex = smoColorIndexDarkGreen
     r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("P1:AA1")
     r.MergeCells = True
-    r.Value = "CATEGORISATION ET CALCUL DU PRIX DE VENTE"
+    r.Value = titles("cat")("text")
     r.Shading.BackgroundPatternColorIndex = smoColorIndexBrown
     r.Shading.ForegroundPatternColorIndex = smoColorIndexBrown
     r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("AB1:AH1")
     r.MergeCells = True
-    r.Value = "SUIVI DU RECONDITIONNEMENT"
+    r.Value = titles("suivi_recon")("text")
     r.Shading.BackgroundPatternColorIndex = smoColorIndexDarkBlue
     r.Shading.ForegroundPatternColorIndex = smoColorIndexDarkBlue
     r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("AI1:AK1")
     r.MergeCells = True
-    r.Value = "VENTE"
+    r.Value = titles("vente")("text")
     r.Shading.BackgroundPatternColorIndex = smoColorIndexGreen
     r.Shading.ForegroundPatternColorIndex = smoColorIndexGreen
     r.Font.ColorIndex = smoColorIndexBlack
     Set r = sheet.Range("AL1:AV1")
     r.MergeCells = True
-    r.Value = "FICHE TECHNIQUE"
+    r.Value = titles("teck")("text")
     r.Shading.BackgroundPatternColorIndex = smoColorIndexBrown
     r.Shading.ForegroundPatternColorIndex = smoColorIndexBrown
     r.Font.ColorIndex = smoColorIndexBlack
