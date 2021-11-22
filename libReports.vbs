@@ -57,6 +57,79 @@ Function getPositionsIndex()
     Set getPositionsIndex = positions
 End Function
 
+' Get title of the sheet
+Function getSheetTitle()
+	getSheetTitle = "Tous les reconditionnements"
+End Function
+
+' Get subject of the sheet
+Function getSheetSubject()
+	getSheetSubject = "Reconditionnements"
+End Function
+
+' Get author of the sheet
+Function getSheetAuthor()
+	getSheetAuthor = "Emmaüs"
+End Function
+
+' Get titles of the very first line
+' excel : RGB()
+'https://docs.microsoft.com/fr-fr/office/vba/api/excel.font.color
+'https://docs.microsoft.com/en-us/office/vba/api/excel.interior.color
+' open office : hexa rgb
+' Blue-Green-Red triplet
+Function getBigTitles()
+	Set titles = CreateObject("Scripting.Dictionary")
+	titles.Add "suivi", CreateObject("Scripting.Dictionary")
+	titles("suivi").Add "text", "SUIVI"
+	titles("suivi").Add "text.color", &HFFFFFF
+	titles("suivi").Add "bg", &H7e8187
+	titles.Add "material", CreateObject("Scripting.Dictionary")
+	titles("material").Add "text", "MATERIEL"
+	titles("material").Add "text.color", &HFFFFFF
+	titles("material").Add "bg", &H0055ff
+	titles.Add "don", CreateObject("Scripting.Dictionary")
+	titles("don").Add "text", "DON"
+	titles("don").Add "text.color", &HFFFFFF
+	titles("don").Add "bg", &H005c05
+	titles.Add "cat", CreateObject("Scripting.Dictionary")
+	titles("cat").Add "text", "CATEGORISATION ET CALCUL DU PRIX DE VENTE"
+	titles("cat").Add "text.color", &HFFFFFF
+	titles("cat").Add "bg", &Hdb852e
+	titles.Add "suivi_recon", CreateObject("Scripting.Dictionary")
+	titles("suivi_recon").Add "text", "SUIVI DU RECONDITIONNEMENT"
+	titles("suivi_recon").Add "text.color", &HFFFFFF
+	titles("suivi_recon").Add "bg", &H2a039e
+	titles.Add "vente", CreateObject("Scripting.Dictionary")
+	titles("vente").Add "text", "VENTE"
+	titles("vente").Add "text.color", &H000000
+	titles("vente").Add "bg", &H5de381
+	titles.Add "teck", CreateObject("Scripting.Dictionary")
+	titles("teck").Add "text", "FICHE TECHNIQUE"
+	titles("teck").Add "text.color", &H000000
+	titles("teck").Add "bg", &Hab521b
+	Set getBigTitles = titles
+End Function
+
+' Apply inspectorRGBToLongRgb to all colors in titles
+Function convertBigTitlesToLongRgb(titles)
+	FOR EACH k IN titles
+		titles(k)("bg") = inspectorRGBToLongRgb(titles(k)("bg"))
+		titles(k)("text.color") = inspectorRGBToLongRgb(titles(k)("text.color"))
+	NEXT
+	Set convertBigTitlesToLongRgb = titles
+End Function
+
+' Convert from hex rgb to vbscript rgb
+' https://www.oreilly.com/library/view/vbscript-in-a/1565927206/re159.html#:~:text=The%20RGB%20color%20value%20represents,greater%20than%20255%20is%20255.
+Function inspectorRGBToLongRgb(color)
+	Dim r, g, b
+	r = RightShift((color And ((2^24)-1)), 16)
+	g = RightShift((color And ((2^16)-1)), 8)
+	b = (color And ((2^8)-1))
+	inspectorRGBToLongRgb = RGB(r, g, b)
+End Function
+
 ' Create the line of title (under a map form)
 Function getTitlesMap()
     Dim titles
