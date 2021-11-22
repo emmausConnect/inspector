@@ -197,7 +197,7 @@ Function sheetUpdateOrNewEntryFromThisPC(sheet)
 	else
 		sheetEntryFromThisPC sheet, line
 	end if
-	IF TypeName(sheet)="Worksheet" THEN
+	IF TypeName(sheet)="Worksheet" Or TypeName(sheet)="ISheet" THEN
 		Set sheetUpdateOrNewEntryFromThisPC = sheet
 	ELSE
 		sheetUpdateOrNewEntryFromThisPC = sheet
