@@ -240,3 +240,295 @@ sub assert( boolExpr, str )
         Err.Raise vbObjectError + 99999, , str
     end if
 end sub
+
+		
+		'*******************************************************************************
+'*     VBScript Binary Functions 
+'*     http://chris.wastedhalo.com
+'*
+'*     VBScript doesn't have the greatest support for Binary Operations
+'*     so I've created these functions for myself and decided to share them
+'*     with anyone who is interested.  One of my issues with VBScript is that
+'*     it's constantly changing the sub-type of my variables when doing bit-wise
+'*     operations.  It also throws up overflow errors when you try and mess the
+'*     sign bit.  I have figured out a few tricks to prevent these problems and
+'*     have incorporated them into these functions.
+'*
+'*     These functions all detect the sub-type of your variables and will preserve
+'*     them.  They will work with Long Integers, Integers and Bytes but you
+'*     Must set the sub-type of your variables using CLng(), CInt() or CByte()
+'*     before hand to get the correct results.
+'*
+'*     Long Integer = 32 Bits - Set Sub-Type with CLng()
+'*          Integer = 16 Bits - Set Sub-Type with CInt()
+'*             Byte = 8 Bits  - Set Sub-Type with CByte()
+'*
+'*     I tried to keep these as simple as possible while preserving sub-types,
+'*     working around VBScripts quirks and still having some error checking.
+'*     If you have any comments or suggestions please post them on my blog.
+'*
+'*     Do what you like with these functions.  All I ask is that you keep a 
+'*     link back to my site included with them if they're shared or reposted.
+'*                         chris.wastedhalo.com
+'******************************************************************************* 
+ 
+'******************************************************************************* 
+'*     GetBit(AnyNumber, BitNumberToCheck)
+'*         Returns True if bit is a 1, False if bit is a 0
+'*         Sub-Type does not matter
+'*******************************************************************************
+Function GetBit(pValue, pBit)
+     Dim BitMask
+     If pBit > 32 Then Err.Raise 6 ' Overflow (Bit number too high)
+     If pBit < 32 Then BitMask = 2 ^ (pBit - 1) Else BitMask = "&H80000000"
+     GetBit = CBool(pValue AND BitMask)
+End Function
+ 
+'******************************************************************************* 
+'*      SetBit(AnyNumber, BitNumberToChange, ChangeBitTo)
+'*          Returns a new number with your bit changed.
+'*          For the pNewValue argument you can use True/False or (1 or 0) 
+'******************************************************************************* 
+Function SetBit(pValue, pBit, pNewValue)
+    Dim NewValue, BitMask, vType
+    If pBit > 32 Then Err.Raise 6 ' Bit number too high
+    If pBit < 32 Then BitMask = 2 ^ (pBit - 1) Else BitMask = "&H80000000"
+    vType = VarType(pValue)
+    If vType <> vbLong And vType <> vbInteger And vType <> vbByte Then Err.Raise 13
+    If pNewValue Then
+        NewValue = CLng(pValue Or BitMask) 
+    Else
+        NewValue = CLng(pValue And Not BitMask)
+    End If
+    Select Case vType
+        Case vbLong: SetBit = CLng(NewValue)
+        Case vbInteger: SetBit = CInt("&H"+ Hex(NewValue And "&HFFFF")) 
+        Case vbByte: SetBit = cByte(NewValue And "&HFF")
+    End Select
+End Function
+ 
+'******************************************************************************* 
+'*      ToggleBit(AnyNumber, BitNumberToToggle)
+'*          Returns a new number with your bit toggled.
+'******************************************************************************* 
+Function ToggleBit(pValue, pBit)
+    Dim BitMask
+    If pBit > 32 Then Err.Raise 6 ' Bit number too high
+    If pBit < 32 Then BitMask = 2 ^ (pBit - 1) Else BitMask = "&H80000000"
+    Select Case VarType(pValue)
+        Case vbLong: ToggleBit = pValue XOR BitMask
+        Case vbInteger: ToggleBit = CInt("&H"+ Hex((pValue XOR BitMask) And "&HFFFF"))
+        Case vbByte: ToggleBit = CByte((pValue XOR BitMask) And "&HFF")
+        Case Else: Err.Raise 13 ' Not a supported type 
+    End Select 
+End Function
+ 
+'*******************************************************************************
+'*     ExtractBits(AnyNumber, BitStartPosition, NumberOfBits)
+'*         Returns the decimal value of the extracted bits.
+'*******************************************************************************
+Function ExtractBits(pValue, pStartPos, pBits)
+    Dim BitMask, tmpMask, i, NewValue
+    For i = pStartPos - pBits + 1 To pStartPos
+        If i < 32 Then tmpMask = 2 ^ (i - 1) Else tmpMask = "&H80000000"
+        BitMask = BitMask Or tmpMask
+    Next
+    NewValue = CLng(pValue And BitMask)
+    If NewValue And "&H80000000" Then tmpMask = pBits Else tmpMask = 0
+    NewValue = (NewValue And "&H7FFFFFFF") / 2 ^ (pStartPos - pBits)
+    If tmpMask Then
+        If tmpMask < 32 Then BitMask = 2 ^ (tmpMask - 1) Else BitMask = "&H80000000"
+        NewValue = NewValue Or BitMask
+    End If
+    ExtractBits = CLng(NewValue)
+End Function
+ 
+'*******************************************************************************
+'*     LeftShift(AnyNumber, BitsToShiftBy)
+'*         Returns a new number with bits shifted. 0's are shifted in from the
+'*         right, bits will fall off on the left.
+'*******************************************************************************
+Function LeftShift(pValue, pShift)
+    Dim NewValue, PrevValue, i
+    PrevValue = pValue
+    For i = 1 to pShift
+        Select Case VarType(pValue)
+            Case vbLong
+                NewValue = (PrevValue And "&H3FFFFFFF") * 2
+                If PrevValue And "&H40000000" Then NewValue = NewValue Or "&H80000000"
+                NewValue = CLng(NewValue)
+            Case vbInteger
+                NewValue = (PrevValue And "&H3FFF") * 2
+                If PrevValue And "&H4000" Then NewValue = NewValue Or "&H8000"
+                NewValue = CInt("&H"+ Hex(NewValue))
+            Case vbByte
+                NewValue = CByte((PrevValue And "&H7F") * 2)
+            Case Else: Err.Raise 13 ' Not a supported type 
+        End Select
+        PrevValue = NewValue
+    Next
+    LeftShift = NewVAlue
+End Function
+ 
+'*******************************************************************************
+'*     RollLeft(AnyNumber, BitsToShiftBy)
+'*         Returns a new number with bits shifted
+'*         Bits are shifted to the left. Bits that that fall off 
+'*         get rolled over to the right.
+'*******************************************************************************
+Function RollLeft(pValue, pRoll)
+    Dim NewValue, PrevValue, i
+    PrevValue = pValue
+    For i = 1 to pRoll
+        Select Case VarType(pValue)
+            Case vbLong
+                NewValue = (PrevValue And "&H3FFFFFFF") * 2
+                If PrevValue And "&H40000000" Then NewValue = NewValue Or "&H80000000"
+                If PrevValue And "&H80000000" Then NewValue = NewValue Or "&H1"
+                NewValue = CLng(NewValue)
+            Case vbInteger
+                NewValue = (PrevValue And "&H3FFF") * 2
+                If PrevValue And "&H4000" Then NewValue = NewValue Or "&H8000"
+                If PrevValue And "&H8000" Then NewValue = NewValue Or "&H1"
+                NewValue = CInt("&H"+ Hex(NewValue))
+            Case vbByte
+                NewValue = (PrevValue And "&H7F") * 2
+                If PrevValue And "&H80" Then NewValue = NewValue Or "&H1"
+                NewValue = CByte(NewValue)
+            Case Else: Err.Raise 13 ' Not a supported type 
+        End Select
+        PrevValue = NewValue
+    Next
+    RollLeft = NewVAlue
+End Function
+ 
+'*******************************************************************************
+'*     RightShift(AnyNumber, BitsToShiftBy)
+'*         Returns a new number with bits shifted
+'*         0's are shifted in from the left. Bits will fall off on the right.
+'*******************************************************************************
+Function RightShift(pValue, pShift)
+    Dim NewValue, PrevValue, i
+    PrevValue = pValue
+    For i = 1 to pShift
+        Select Case VarType(pValue)
+            Case vbLong
+                NewValue = Int((PrevValue And "&H7FFFFFFF") / 2)
+                If PrevValue And "&H80000000" Then NewValue = NewValue Or "&H40000000"
+                NewValue = CLng(NewValue)
+            Case vbInteger
+                NewValue = Int((PrevValue And "&H7FFF") / 2)
+                If PrevValue And "&H8000" Then NewValue = NewValue Or "&H4000"
+                NewValue = CInt(NewValue)
+            Case vbByte
+                NewValue = CByte(PrevValue / 2)
+            Case Else: Err.Raise 13 ' Not a supported type
+        End Select
+        PrevValue = NewValue
+    Next
+    RightShift = PrevValue
+End Function
+ 
+'*******************************************************************************
+'*     SignedRightShift(AnyNumber, BitsToShiftBy)
+'*         Returns a new number with bits shifted
+'*         The sign bit is copied and shifted in from the left. 
+'*         Bits will fall off on the right.
+'*******************************************************************************
+Function SignedRightShift(pValue, pShift)
+    Dim NewValue, PrevValue, i
+    PrevValue = pValue
+    For i = 1 to pShift
+        Select Case VarType(pValue)
+            Case vbLong
+                NewValue = Int((PrevValue And "&H7FFFFFFF") / 2)
+                If PrevValue And "&H80000000" Then NewValue = NewValue Or "&HC0000000"
+                NewValue = CLng(NewValue)
+            Case vbInteger
+                NewValue = Int((PrevValue And "&H7FFF") / 2)
+                If PrevValue And "&H8000" Then NewValue = NewValue Or "&HC000"
+                NewValue = CInt("&H"+ Hex(NewValue))
+            Case vbByte
+                NewValue = Int(PrevValue / 2)
+                If PrevValue And "&H80" Then NewValue = NewValue Or "&HC0"
+                NewValue = CByte(NewValue)
+            Case Else: Err.Raise 13 ' Not a supported type
+        End Select
+        PrevValue = NewValue
+    Next
+    SignedRightShift = PrevValue
+End Function
+ 
+'*******************************************************************************
+'*     RollRight(AnyNumber, BitsToShiftBy)
+'*         Returns a new number with bits shifted
+'*         Bits are shifted to the right. Bits that fall off 
+'*         get rolled over to the left.
+'*******************************************************************************
+Function RollRight(pValue, pRoll)
+    Dim NewValue, PrevValue, i
+    PrevValue = pValue
+    For i = 1 to pRoll
+        Select Case VarType(pValue)
+            Case vbLong
+                NewValue = Int((PrevValue And "&H7FFFFFFF") / 2)
+                If PrevValue And "&H80000000" Then NewValue = NewValue Or "&H40000000"
+                If PrevValue And "&H1" Then NewValue = NewValue Or "&H80000000"
+                NewValue = CLng(NewValue)
+            Case vbInteger
+                NewValue = Int((PrevValue And "&H7FFF") / 2)
+                If PrevValue And "&H8000" Then NewValue = NewValue Or "&H4000"
+                If PrevValue And "&H1" Then NewValue = NewValue Or "&H8000"
+                NewValue = CInt("&H"+ Hex(NewValue))
+            Case vbByte
+                NewValue = Int(PrevValue / 2)
+                If PrevValue And "&H1" Then NewValue = NewValue Or "&H80"
+                NewValue = CByte(NewValue)
+            Case Else: Err.Raise 13 ' Not a supported type
+        End Select
+        PrevValue = NewValue
+    Next
+    RollRight = PrevValue
+End Function
+ 
+'*******************************************************************************
+'*     bMask(BitNumber)
+'*         Returns a number with all bits set to 0 except for the specified bit
+'*******************************************************************************
+Function bMask(pBit)
+    If pBit < 32 Then bMask = 2 ^ (pBit - 1) Else bMask = "&H80000000"
+End Function
+ 
+'*******************************************************************************
+'*     Dec2Bin(AnyNumber)
+'*         Returns a string representing the number in binary.
+'*******************************************************************************
+Function Dec2Bin(pValue)
+    Dim TotalBits, i
+    Select Case VarType(pValue)
+        Case vbLong: TotalBits = 32
+        Case vbInteger: TotalBits = 16
+        Case vbByte: TotalBits = 8
+        Case Else: Err.Raise 13 ' Not a supported type
+    End Select
+    For i = TotalBits to 1 Step -1
+        If pValue And bMask(i) Then Dec2Bin = Dec2Bin + "1" Else Dec2Bin = Dec2Bin + "0"
+    Next
+End Function
+ 
+'*******************************************************************************
+'*     Bin2Dec(BinaryString)
+'*         Returns the decimal value of a string of binary.
+'*******************************************************************************
+Function Bin2Dec(pBinString)
+    Dim Binary, i
+    Binary = Trim(Right(pBinString, Len(pBinString) - Instr(pBinString,"1") + 1))
+    If Len(Binary) > 32 Then Err.Raise 6' Overflow
+    For i = 1 To Len(Binary)
+        Select Case Mid(Binary, i, 1)
+            Case "1": Bin2Dec = Bin2Dec Or bMask(Len(Binary) - i + 1)
+            Case "0": 'Do Nothing
+            Case Else: Err.Raise 13 ' Not 1 or 0 (Type Mismatch Error) 
+        End Select 
+    Next
+End Function
