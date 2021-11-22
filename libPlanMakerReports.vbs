@@ -86,6 +86,28 @@ Function openExisting(fname)
 	Set openExisting = props
 End Function
 
+Dim smoColorIndexAuto, smoColorIndexTransparent, smoColorIndexBlack, smoColorIndexBlue, smoColorIndexCyan, smoColorIndexGreen
+Dim smoColorIndexMagenta, smoColorIndexRed, smoColorIndexYellow, smoColorIndexWhite, smoColorIndexDarkBlue, smoColorIndexDarkCyan
+Dim smoColorIndexDarkGreen, smoColorIndexDarkMagenta, smoColorIndexDarkRed, smoColorIndexBrown, smoColorIndexDarkGray, smoColorIndexLightGray
+smoColorIndexAuto = -1 ' Automatic (see below)
+smoColorIndexTransparent = -1 ' Transparent (see below)
+smoColorIndexBlack = 0 ' Black
+smoColorIndexBlue = 1 ' Blue
+smoColorIndexCyan = 2 ' Cyan
+smoColorIndexGreen = 3 ' Green
+smoColorIndexMagenta = 4 ' Magenta
+smoColorIndexRed = 5 ' Red
+smoColorIndexYellow = 6 ' Yellow
+smoColorIndexWhite = 7 ' White
+smoColorIndexDarkBlue = 8 ' Dark blue
+smoColorIndexDarkCyan = 9 ' Dark cyan
+smoColorIndexDarkGreen = 10 ' Dark green
+smoColorIndexDarkMagenta = 11 ' Dark magenta
+smoColorIndexDarkRed = 12 ' Dark red
+smoColorIndexBrown = 13 ' Brown
+smoColorIndexDarkGray = 14 ' Dark gray
+smoColorIndexLightGray = 15 ' Light gray
+
 ' Create initial sheet of reports
 ' http://www.softmaker.net/down/bm2010manual_en.pdf
 Function sheetCreateInital()
@@ -106,44 +128,52 @@ Function sheetCreateInital()
     Set r = sheet.Range("A1:D1")
     r.MergeCells = True
     r.Value = "SUIVI"
-    'r.Shading.BackgroundPatternColorIndex = 48
-    r.Font.ColorIndex = 2
+    r.Shading.BackgroundPatternColorIndex = smoColorIndexDarkGray
+    r.Shading.ForegroundPatternColorIndex = smoColorIndexDarkGray
+    r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("E1:I1")
     r.MergeCells = True
     r.Value = "MATERIEL"
-    'r.Interior.ColorIndex = 23
-    r.Font.ColorIndex = 2
+    r.Shading.BackgroundPatternColorIndex = smoColorIndexBlue
+    r.Shading.ForegroundPatternColorIndex = smoColorIndexBlue
+    r.Shading.Texture = 13
+    r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("J1:O1")
     r.MergeCells = True
     r.Value = "DON"
-    'r.Interior.ColorIndex = 10
-    r.Font.ColorIndex = 2
+    r.Shading.BackgroundPatternColorIndex = smoColorIndexDarkGreen
+    r.Shading.ForegroundPatternColorIndex = smoColorIndexDarkGreen
+    r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("P1:AA1")
     r.MergeCells = True
     r.Value = "CATEGORISATION ET CALCUL DU PRIX DE VENTE"
-    'r.Interior.ColorIndex = 45
-    r.Font.ColorIndex = 2
+    r.Shading.BackgroundPatternColorIndex = smoColorIndexBrown
+    r.Shading.ForegroundPatternColorIndex = smoColorIndexBrown
+    r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("AB1:AH1")
     r.MergeCells = True
     r.Value = "SUIVI DU RECONDITIONNEMENT"
-    'r.Interior.ColorIndex = 55
-    r.Font.ColorIndex = 2
+    r.Shading.BackgroundPatternColorIndex = smoColorIndexDarkBlue
+    r.Shading.ForegroundPatternColorIndex = smoColorIndexDarkBlue
+    r.Font.ColorIndex = smoColorIndexWhite
     Set r = sheet.Range("AI1:AK1")
     r.MergeCells = True
     r.Value = "VENTE"
-    'r.Interior.ColorIndex = 50
-    r.Font.ColorIndex = 1
+    r.Shading.BackgroundPatternColorIndex = smoColorIndexGreen
+    r.Shading.ForegroundPatternColorIndex = smoColorIndexGreen
+    r.Font.ColorIndex = smoColorIndexBlack
     Set r = sheet.Range("AL1:AV1")
     r.MergeCells = True
     r.Value = "FICHE TECHNIQUE"
-    'r.Interior.ColorIndex = 46
-    r.Font.ColorIndex = 1
+    r.Shading.BackgroundPatternColorIndex = smoColorIndexBrown
+    r.Shading.ForegroundPatternColorIndex = smoColorIndexBrown
+    r.Font.ColorIndex = smoColorIndexBlack
 
     sheetCreateRow sheet, 2, getTitlesMap()
 
     Set r = sheet.Range("A1:AV2")
     r.Font.Bold = True
-	
+
     props.Add "pm", pm
     props.Add "w", w
     props.Add "sheet", sheet
@@ -184,10 +214,24 @@ End Function
 
 
 
+Dim pmHAlignGeneral, pmHAlignLeft, pmHAlignRight, pmHAlignCenter, pmHAlignJustify, pmHAlignCenterAcrossSelection
+pmHAlignGeneral = 0 ' Default
+pmHAlignLeft = 1 ' Left
+pmHAlignRight = 2 ' Right
+pmHAlignCenter = 3 ' Centered
+pmHAlignJustify = 4 ' Justified
+pmHAlignCenterAcrossSelection = 5 ' Centered across columns
+Dim pmVAlignTop, pmVAlignCenter, pmVAlignBottom, pmVAlignJustify
+pmVAlignTop = 0 ' Top
+pmVAlignCenter = 1 ' Centered
+pmVAlignBottom = 2 ' Bottom
+pmVAlignJustify = 3 ' Justified
 
 ' Autofit all cols in the sheet
 Function sheetAutoFit(sheet)
-
+    sheet.Cells.HorizontalAlignment = pmHAlignCenter
+    sheet.Cells.VerticalAlignment = pmVAlignCenter
+    sheet.Cells.AutoFit
 End Function
 		
 ' Returns -1 if this pc is not in the sheet else 1..n line where the entry has been found
