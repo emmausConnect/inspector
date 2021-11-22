@@ -105,9 +105,9 @@ outputFile = getOutputFile(outputFilename)
 
 MsgBox("L'inspecteur va chercher après que vous validez")
 
-Set o = sheetOpenOrCreate(outputFile)
 
-If TypeName(o("sheet")) = "Worksheet" THEN
+Set o = sheetOpenOrCreate(outputFile)
+If TypeName(o("sheet")) = "Worksheet" Or TypeName(o("sheet"))="ISheet" THEN
   Set o("sheet") = sheetUpdateOrNewEntryFromThisPC(o("sheet"))
 ELSE
   o("sheet") = sheetUpdateOrNewEntryFromThisPC(o("sheet"))
