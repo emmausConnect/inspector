@@ -25,6 +25,7 @@ End Function
 ' https://docs.microsoft.com/fr-fr/office/vba/api/excel.application(object)
 ' https://docs.microsoft.com/fr-fr/office/vba/api/excel.worksheet
 Function sheetCreateInital()
+    Set titles = convertBigTitlesToLongRgb(getBigTitles())
     Set props = CreateObject("Scripting.Dictionary")
     Set objExcel = CreateObject("Excel.Application")
     objExcel.Visible = False
@@ -32,47 +33,47 @@ Function sheetCreateInital()
     Set w = objExcel.Workbooks.Add()
     w.Activate
     With w
-     .Title = "Tous les reconditionnements" 
-     .Subject = "Reconditionnements"
-     .Author = "Emmaüs"
+     .Title = getSheetTitle()
+     .Subject = getSheetSubject()
+     .Author = getSheetAuthor()
     End With
 
     Set sheet = w.ActiveSheet
     Set r = sheet.Range("A1:D1")
     r.Merge
-    r.Value = "SUIVI"
-    r.Interior.ColorIndex = 48
-    r.Font.ColorIndex = 2
+    r.Value = titles("suivi")("text")
+    r.Interior.Color = titles("suivi")("bg")
+    r.Font.Color = titles("suivi")("text.color")
     Set r = sheet.Range("E1:I1")
     r.Merge
-    r.Value = "MATERIEL"
-    r.Interior.ColorIndex = 23
-    r.Font.ColorIndex = 2
+    r.Value = titles("material")("text")
+    r.Interior.Color = titles("material")("bg")
+    r.Font.Color = titles("material")("text.color")
     Set r = sheet.Range("J1:O1")
     r.Merge
-    r.Value = "DON"
-    r.Interior.ColorIndex = 10
-    r.Font.ColorIndex = 2
+    r.Value = titles("don")("text")
+    r.Interior.Color = titles("don")("bg")
+    r.Font.Color = titles("don")("text.color")
     Set r = sheet.Range("P1:AA1")
     r.Merge
-    r.Value = "CATEGORISATION ET CALCUL DU PRIX DE VENTE"
-    r.Interior.ColorIndex = 45
-    r.Font.ColorIndex = 2
+    r.Value = titles("cat")("text")
+    r.Interior.Color = titles("cat")("bg")
+    r.Font.Color = titles("cat")("text.color")
     Set r = sheet.Range("AB1:AH1")
     r.Merge
-    r.Value = "SUIVI DU RECONDITIONNEMENT"
-    r.Interior.ColorIndex = 55
-    r.Font.ColorIndex = 2
+    r.Value = titles("suivi_recon")("text")
+    r.Interior.Color = titles("suivi_recon")("bg")
+    r.Font.Color = titles("suivi_recon")("text.color")
     Set r = sheet.Range("AI1:AK1")
     r.Merge
-    r.Value = "VENTE"
-    r.Interior.ColorIndex = 50
-    r.Font.ColorIndex = 1
+    r.Value = titles("vente")("text")
+    r.Interior.Color = titles("vente")("bg")
+    r.Font.Color = titles("vente")("text.color")
     Set r = sheet.Range("AL1:AV1")
     r.Merge
-    r.Value = "FICHE TECHNIQUE"
-    r.Interior.ColorIndex = 46
-    r.Font.ColorIndex = 1
+    r.Value = titles("teck")("text")
+    r.Interior.Color = titles("teck")("bg")
+    r.Font.Color = titles("teck")("text.color")
 
     sheetCreateRow sheet, 2, getTitlesMap()
 
