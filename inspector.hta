@@ -238,7 +238,7 @@ End Function
 
 		Set o = sheetOpenOrCreate(outputFile)
 
-		If TypeName(o("sheet")) = "Worksheet" THEN
+		If TypeName(o("sheet"))="Worksheet" Or TypeName(o("sheet"))="ISheet" THEN
 			Set o("sheet") = sheetUpdateOrNewEntryFromThisPC(o("sheet"))
 		ELSE
 			o("sheet") = sheetUpdateOrNewEntryFromThisPC(o("sheet"))
