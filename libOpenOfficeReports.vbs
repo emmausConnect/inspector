@@ -31,6 +31,7 @@ FontWeightBLACK = 200.000000 'specifies a 200% font weight.
 ' Create initial sheet of reports
 'https://www.openoffice.org/api/docs/common/ref/com/sun/star/frame/Desktop.html
 Function sheetCreateInital()
+	Set titles = getBigTitles()
 	Set props = CreateObject("Scripting.Dictionary")
 	Set sm = CreateObject("com.sun.star.ServiceManager")
 	Set d = sm.CreateInstance("com.sun.star.frame.Desktop")
@@ -41,39 +42,39 @@ Function sheetCreateInital()
 	Set sheet = w.CurrentController.getActiveSheet()
 	Set r = sheet.getCellRangeByName("A1:D1")
 	r.merge(True)
-	r.getCellByPosition(0, 0).String = "SUIVI"
-	r.CellBackColor = &H7e8187
-	r.CharColor = &HFFFFFF
+	r.getCellByPosition(0, 0).String = titles("suivi")("text")
+	r.CellBackColor = titles("suivi")("bg")
+	r.CharColor = titles("suivi")("text.color")
 	Set r = sheet.getCellRangeByName("E1:I1")
 	r.merge(True)
-	r.getCellByPosition(0, 0).String = "MATERIEL"
-	r.CellBackColor = &H0055ff
-	r.CharColor = &HFFFFFF
+	r.getCellByPosition(0, 0).String = titles("material")("text")
+	r.CellBackColor = titles("material")("bg")
+	r.CharColor = titles("material")("text.color")
 	Set r = sheet.getCellRangeByName("J1:O1")
 	r.merge(True)
-	r.getCellByPosition(0, 0).String = "DON"
-	r.CellBackColor = &H005c05
-	r.CharColor = &HFFFFFF
+	r.getCellByPosition(0, 0).String = titles("don")("text")
+	r.CellBackColor = titles("don")("bg")
+	r.CharColor = titles("don")("text.color")
 	Set r = sheet.getCellRangeByName("P1:AA1")
 	r.merge(True)
-	r.getCellByPosition(0, 0).String = "CATEGORISATION ET CALCUL DU PRIX DE VENTE"
-	r.CellBackColor = &Hdb852e
-	r.CharColor = &HFFFFFF
+	r.getCellByPosition(0, 0).String = titles("cat")("text")
+	r.CellBackColor = titles("cat")("bg")
+	r.CharColor = titles("cat")("text.color")
 	Set r = sheet.getCellRangeByName("AB1:AH1")
 	r.merge(True)
-	r.getCellByPosition(0, 0).String = "SUIVI DU RECONDITIONNEMENT"
-	r.CellBackColor = &H2a039e
-	r.CharColor = &HFFFFFF
+	r.getCellByPosition(0, 0).String = titles("suivi_recon")("text")
+	r.CellBackColor = titles("suivi_recon")("bg")
+	r.CharColor = titles("suivi_recon")("text.color")
 	Set r = sheet.getCellRangeByName("AI1:AK1")
 	r.merge(True)
-	r.getCellByPosition(0, 0).String = "VENTE"
-	r.CellBackColor = &H5de381
-	r.CharColor = &H000000
+	r.getCellByPosition(0, 0).String = titles("vente")("text")
+	r.CellBackColor = titles("vente")("bg")
+	r.CharColor = titles("vente")("text.color")
 	Set r = sheet.getCellRangeByName("AL1:AV1")
 	r.merge(True)
-	r.getCellByPosition(0, 0).String = "FICHE TECHNIQUE"
-	r.CellBackColor = &Hab521b
-	r.CharColor = &H000000
+	r.getCellByPosition(0, 0).String = titles("teck")("text")
+	r.CellBackColor = titles("teck")("bg")
+	r.CharColor = titles("teck")("text.color")
 
 	sheetCreateRow sheet, 2, getTitlesMap()
 
