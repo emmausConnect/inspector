@@ -285,13 +285,8 @@ Function sheetNewEntryFromThisPC(sheet)
 End Function
 
 ' Get a compatible output format from a given name
-Function getCompatOutputFmt(fname, destExt)
-	getCompatOutputFmt = fname & destExt
-	getCompatOutputFmt = Replace(getCompatOutputFmt, ".ods", destExt)
-	getCompatOutputFmt = Replace(getCompatOutputFmt, ".csv", destExt)
-	getCompatOutputFmt = Replace(getCompatOutputFmt, ".xlsx", destExt)
-	getCompatOutputFmt = Replace(getCompatOutputFmt, ".pmdx", destExt)
-	getCompatOutputFmt = Replace(getCompatOutputFmt, destExt & destExt, destExt)
+Function getCompatOutputFmt(fname, destExt)	
+	getCompatOutputFmt = reReplace(fname, "\.[^\.]+$", "") & destExt ' remove extra extension in filename
 End Function
 
 ' get avaliable format for this computer
@@ -323,8 +318,35 @@ Function getAvaliableFormats()
 	 getAvaliableFormats = fmts
 End Function
 
+' Get only ext name from the complete filename
+Function onlyExtName(filename)
+	On Error Resume Next
+	Err.Clear
+	Dim matches
+	Set oRegExp = New RegExp
+	oRegExp.Pattern = "\.([^\.]+)$"
+	oRegExp.Global = True
+	Set matches = oRegExp.Execute(filename)
+	onlyExtName = reReplace(matches(0), "^\.", "")
+	If Err.Number <> 0 Then
+		onlyExtName = ""
+	end if
+	On Error Goto 0
+End Function
+
+' Get filename with extension compatible with this lib
+Function getOutputFile(fname)
+	Dim ext 
+	ext = onlyExtName(fname)
+	if ext="" then
+		ext = getPreferredExtension()
+	end if
+	getOutputFile = getCompatOutputFmt(fname, "." & ext)
+End Function
+
 ' load backend for a given extension
 Function loadBackendForExtension(extname)
+	extname = onlyExtName(extname)
 	Set lst = CreateObject("Scripting.Dictionary")
 	lst.Add "csv", "libCsvReports.vbs"
 	lst.Add "ods", "libOpenOfficeReports.vbs"
@@ -332,6 +354,8 @@ Function loadBackendForExtension(extname)
 	lst.Add "pmdx", "libPlanMakerReports.vbs"
 	load(lst(extname))
 End Function
+
+
 
 ' Load prefered backend for this computer
 Function loadPreferedBackend()
