@@ -211,22 +211,25 @@ Function sheetClose(o)
 	o("pm").Quit
 End Function
 
-
-' Get filename with extension compatible with this lib
-Function getOutputFile(fname)
-	getOutputFile = getCompatOutputFmt(fname, ".pmdx")
-End Function
-
-
 ' Get preferred extension for this lib
 Function getPreferredExtension()
-	getPreferredExtension = ".pmdx"
+	getPreferredExtension = "pmdx"
 End Function
 
 ' Get avaliable extension type
 Function getAvaliableExtensions() 
 	Dim exts(0)
-	exts(0) = ".pmdx"
+	exts(0) = "pmdx"
+		IF FALSE THEN
+	exts(1) = "dbf"		'dBase
+	exts(2) = "dif"		'Data Interchange Format
+	exts(3) = "pmd"
+	exts(4) = "pmv"
+	exts(5) = "pmvx"
+	exts(6) = "slk"		'SYLK
+	exts(7) = "xls"		'Microsoft Excel 97-2003
+	exts(8) = "xlt"		'Microsoft Excel 97-2003 Template		
+		END IF
 	getAvaliableExtensions = exts
 End Function
 
