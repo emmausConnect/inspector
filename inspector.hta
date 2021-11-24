@@ -221,19 +221,19 @@ End Function
 	load("libReports.vbs")
 	loadPreferedBackend()
 
-	Dim backend
+	Dim extNameForFile
+	extNameForFile = getPreferredExtension()
 	initFmtsSortie()
 		
 	' Function for the gui
 	Function startInspection()
-		outputFilename = outFileNameDiv.value
-		if VarType(backend)=0 then
-			loadPreferedBackend()
+		if onlyExtName(outFileNameDiv.value)="" then
+			outputFile = getOutputFile(outFileNameDiv.value & "." & extNameForFile)
 		else
-			loadBackendForExtension(backend)
+			outputFile = getOutputFile(outFileNameDiv.value)
 		end if
-		outputFile = getOutputFile(outputFilename)
 		outputFile = outputFolderDiv.value & "\" & outputFile
+
 		StartInspectText "Inspection en cours ..."
 
 		Set o = sheetOpenOrCreate(outputFile)
@@ -262,20 +262,21 @@ End Function
 	Function chooseFmt()
 		For i = 0 to fmtsSortie.length - 1
 			if fmtsSortie(i).Selected then
-				backend=fmtsSortie(i).Value
+				extNameForFile=fmtsSortie(i).Value
 			end if
 		next
 	End Function
 
 	' Init fmt checkbox	
 	Function initFmtsSortie()
-		Dim out, other
-		for each fmt in  getAvaliableFormats()
+		Dim arr
+		arr = getAvaliableExtensions()
+		For i = 0 To UBound(arr)
 			Set objOpt = Document.createElement("OPTION")
-			objOpt.Text = fmt
-			objOpt.Value = fmt
+			objOpt.Text = arr(i)
+			objOpt.Value = arr(i)
 			fmtsSortie.add(objOpt)
-			if "."&fmt=getPreferredExtension() then
+			if arr(i)=getPreferredExtension() then
 				objOpt.Selected = True
 			else
 				objOpt.Selected = False
