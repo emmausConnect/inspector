@@ -1,3 +1,32 @@
+Set supportedFormats = CreateObject("Scripting.Dictionary")
+supportedFormats.Add "xls", "MS Excel 97"	'Microsoft Excel 97-2003
+supportedFormats.Add "ods", "Calc8" 		'ODF Spreadsheet
+supportedFormats.Add "html", "HTML (StarCalc)"  'HTML Document (Calc)
+'supportedFormats.Add "ots", ""			'ODF Spreadsheet Template
+'supportedFormats.Add "fods", ""		'Flat XML ODF Spreadsheet
+'supportedFormats.Add  "uos", ""		'Unified Office Format Spreadsheet
+'supportedFormats.Add  "xlsx", "" 		'Microsoft Excel 2007-2013 XML
+'supportedFormats.Add  "xml", "" 		'Microsoft Excel 2003 XML
+'supportedFormats.Add "xlt", ""			'Microsoft Excel 97-2003 Template
+'supportedFormats.Add "dif", ""			'Data Interchange Format
+'supportedFormats.Add "dbf", ""			'dBase
+'supportedFormats.Add "slk", ""			'SYLK
+'supportedFormats.Add "csv", ""			'Text CSV
+'supportedFormats.Add "xlsm", ""		'Microsoft Excel 2007-2016 XML (macro enabled)
+
+' Get avaliable extension type
+Function getAvaliableExtensions() 
+	ReDim exts(0)
+	exts(0) = "ods"
+	FOR EACH k IN supportedFormats
+		if not k=exts(0) then
+			ReDim Preserve exts(UBound(exts)+1)
+			exts(UBound(exts)) = k
+		end if
+	NEXT
+	getAvaliableExtensions = exts
+End Function
+
 ' Create a row in the given by getPositionsIndex
 Function sheetCreateRowFromArray(sheet, line, data) 
        Dim keys, cell, cellv
@@ -182,7 +211,11 @@ End Function
 
 ' Write the sheet to the storage
 Function sheetWrite(o, f)
-	o("w").StoreToURL ConvertToURL(f), Array()
+	Set oSM = CreateObject("com.sun.star.ServiceManager")	
+	Set oPropertyValue = oSM.Bridge_GetStruct("com.sun.star.beans.PropertyValue")
+	oPropertyValue.Name = "FilterName"
+	oPropertyValue.Value = supportedFormats(onlyExtName(f))
+	o("w").StoreToURL ConvertToURL(f), Array(oPropertyValue)
 End Function
 
 ' Close the current instance of excel
@@ -190,20 +223,8 @@ Function sheetClose(o)
 	o("w").close(true)
 End Function
 
-' Get filename with extension compatible with this lib
-Function getOutputFile(fname)
-	getOutputFile = getCompatOutputFmt(fname, ".ods")
-End Function
-
-
 ' Get preferred extension for this lib
 Function getPreferredExtension()
-	getPreferredExtension = ".ods"
+	getPreferredExtension = "ods"
 End Function
 
-' Get avaliable extension type
-Function getAvaliableExtensions() 
-	Dim exts(0)
-	exts(0) = ".ods"
-	getAvaliableExtensions = exts
-End Function
