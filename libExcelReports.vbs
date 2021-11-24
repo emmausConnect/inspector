@@ -1,7 +1,36 @@
-
-
-
-
+'https://docs.microsoft.com/fr-fr/office/vba/api/excel.xlfileformat
+Set excelFmts = CreateObject("Scripting.Dictionary")
+excelFmts.Add "xla", 18    	'Macro complémentaire Microsoft Excel 97-2003	*.xla
+excelFmts.Add "txt", -4158 	'Texte la plateforme actuelle	*.txt
+excelFmts.Add "xlsb", 50   	'Classeur Excel binaire	*.xlsb
+excelFmts.Add "xls", -4143    	'Classeur normal	*.xls
+excelFmts.Add "html", 44
+excelFmts.Add "htm", 44
+excelFmts.Add "ods", 60
+excelFmts.Add "xlsx", 51	'Classeur Open XML	*.xlsx
+excelFmts.Add "xltx", 54	'Modèle Open XML	*.xltx
+excelFmts.Add "xltm", 53	'Modèle Open XML avec macros	*.xltm
+excelFmts.Add "xlsm", 52	'Classeur Open XML avec macros	*.xlsm
+excelFmts.Add "xlt", 17		'Format de modèle Excel	*.xlt
+excelFmts.Add "mht", 45 	'Archive Web	*.mht; *.mhtml
+excelFmts.Add "mhtml", 45	'Archive Web	*.mht; *.mhtml
+excelFmts.Add "xml", 46		'Feuille de calcul XML	*.xml
+''' Formats fails
+'' saveas method fail
+'excelFmts.Add "wj2", 14		'Japonais 1-2-3	*.wj2
+'excelFmts.Add "wj3", 41		'Japonais 1-2-3	*.wj3
+'excelFmts.Add "wk1", 31		'Format Lotus 1-2-3	*.wk1
+'excelFmts.Add "wk3", 32 	'Format Lotus 1-2-3	*.wk3
+'excelFmts.Add "wk4", 38		'Format Lotus 1-2-3	*.wk4
+'excelFmts.Add "wks", 4		'Format Lotus 1-2-3	*.wks
+'excelFmts.Add "wq1", 34		'Format Quattro Pro	*.wq1
+'excelFmts.Add "csv", 62    	'CSV	 *.csv UTF8 csv
+'excelFmts.Add "dbf", 11    	'Format Dbase 4	*.dbf
+'' object requis sheet
+'excelFmts.Add "xlam", 55 	'Macro complémentaire Open XML	*.xlam
+''' Not well supported
+'excelFmts.Add "slk", 2		'Format SYLK (Symbolic Link Format)	*.slk
+'excelFmts.Add "dif", 9	   	'Format DIF (Data Interchange Format)	*.dif
 
 ' Create a row in the given by getPositionsIndex
 Function sheetCreateRowFromArray(sheet, line, data) 
@@ -173,7 +202,7 @@ End Function
 Function sheetWrite(o, f)
 	f = getAbsoluteFilenameFromRelative(f)
         IF o("mustWrite") THEN
-           o("w").Close True, f
+           o("w").SaveAs f, excelFmts(onlyExtName(f))
         ELSE 
 	   o("w").Save
 	END IF
@@ -184,20 +213,20 @@ Function sheetClose(o)
 	o("objExcel").Quit
 End Function
 
-' Get filename with extension compatible with this lib
-Function getOutputFile(fname)
-	getOutputFile = getCompatOutputFmt(fname, ".xlsx")
-End Function
-
-
 ' Get preferred extension for this lib
 Function getPreferredExtension()
-	getPreferredExtension = ".xlsx"
+	getPreferredExtension = "xlsx"
 End Function
 
 ' Get avaliable extension type
 Function getAvaliableExtensions() 
-	Dim exts(0)
-	exts(0) = ".xlsx"
+	ReDim exts(0)
+	exts(0) = "xlsx"
+	FOR EACH k IN excelFmts
+		if not k=exts(0) then
+			ReDim Preserve exts(UBound(exts)+1)
+			exts(UBound(exts)) = k
+		end if
+	NEXT
 	getAvaliableExtensions = exts
 End Function
