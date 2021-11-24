@@ -18,20 +18,15 @@ Function sheetClose(o)
 	' nothing to do
 End Function
 
-' Get filename with extension compatible with this lib
-Function getOutputFile(fname)
-    getOutputFile = getCompatOutputFmt(fname, ".csv")
-End Function
-
 ' Get preferred extension for this lib
 Function getPreferredExtension()
-	getPreferredExtension = ".csv"
+	getPreferredExtension = "csv"
 End Function
 
 ' Get avaliable extension type
 Function getAvaliableExtensions() 
 	Dim exts(0)
-	exts(0) = ".csv"
+	exts(0) = "csv"
 	getAvaliableExtensions = exts
 End Function
 
