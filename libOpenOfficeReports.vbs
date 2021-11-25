@@ -1,18 +1,20 @@
 Set supportedFormats = CreateObject("Scripting.Dictionary")
-supportedFormats.Add "xls", "MS Excel 97"	'Microsoft Excel 97-2003
-supportedFormats.Add "ods", "Calc8" 		'ODF Spreadsheet
-supportedFormats.Add "html", "HTML (StarCalc)"  'HTML Document (Calc)
-'supportedFormats.Add "ots", ""			'ODF Spreadsheet Template
-'supportedFormats.Add "fods", ""		'Flat XML ODF Spreadsheet
-'supportedFormats.Add  "uos", ""		'Unified Office Format Spreadsheet
-'supportedFormats.Add  "xlsx", "" 		'Microsoft Excel 2007-2013 XML
-'supportedFormats.Add  "xml", "" 		'Microsoft Excel 2003 XML
-'supportedFormats.Add "xlt", ""			'Microsoft Excel 97-2003 Template
-'supportedFormats.Add "dif", ""			'Data Interchange Format
-'supportedFormats.Add "dbf", ""			'dBase
-'supportedFormats.Add "slk", ""			'SYLK
-'supportedFormats.Add "csv", ""			'Text CSV
-'supportedFormats.Add "xlsm", ""		'Microsoft Excel 2007-2016 XML (macro enabled)
+supportedFormats.Add "xls", "MS Excel 97"					'Microsoft Excel 97-2003
+supportedFormats.Add "ods", "Calc8" 						'ODF Spreadsheet
+supportedFormats.Add "html", "HTML (StarCalc)"  				'HTML Document (Calc)
+supportedFormats.Add "ots", "calc8_template"					'ODF Spreadsheet Template
+supportedFormats.Add "fods", "OpenDocument Spreadsheet Flat XML"		'Flat XML ODF Spreadsheet
+supportedFormats.Add "uos", "UOF spreadsheet"					'Unified Office Format Spreadsheet
+supportedFormats.Add "xlsx", "Calc Office Open XML" 				'Microsoft Excel 2007-2013 XML
+supportedFormats.Add "xlt", "MS Excel 97 Vorlage/Template"			'Microsoft Excel 97-2003 Template
+supportedFormats.Add "dif", "DIF"						'Data Interchange Format
+supportedFormats.Add "dbf", "dBase"						'dBase
+supportedFormats.Add "slk", "SYLK"						'SYLK
+supportedFormats.Add "csv", "Text - txt - csv (StarCalc)"			'Text CSV
+'todo for csv
+'args3(2).Name = "FilterOptions"
+'args3(2).Value = "44,34,IBMPC_850,1,,0,false,true,false,false,false"
+supportedFormats.Add "xlsm", "Calc MS Excel 2007 VBA XML"		'Microsoft Excel 2007-2016 XML (macro enabled)
 
 ' Get avaliable extension type
 Function getAvaliableExtensions() 
@@ -64,9 +66,7 @@ Function sheetCreateInital()
 	Set props = CreateObject("Scripting.Dictionary")
 	Set sm = CreateObject("com.sun.star.ServiceManager")
 	Set d = sm.CreateInstance("com.sun.star.frame.Desktop")
-	Dim arg()
-	Set w = d.loadComponentFromURL("private:factory/scalc", "_blank", 0, arg)
-	d.getCurrentFrame().getContainerWindow().setVisible(False) ' todo : better way to do that
+	Set w = d.loadComponentFromURL("private:factory/scalc", "_blank", 0, Array(getBeanProperty("Hidden", True)))
 
 	Set sheet = w.CurrentController.getActiveSheet()
 	Set r = sheet.getCellRangeByName("A1:D1")
@@ -117,14 +117,22 @@ Function sheetCreateInital()
 	Set sheetCreateInital = props
 End Function
 
+' Get property in a bean
+' https://wiki.openoffice.org/wiki/Opening_a_document
+Function getBeanProperty(name, value)
+	Set oSM = CreateObject("com.sun.star.ServiceManager")
+	Set oPropertyValue = oSM.Bridge_GetStruct("com.sun.star.beans.PropertyValue")
+	oPropertyValue.Name = name
+	oPropertyValue.Value = value
+	Set getBeanProperty = oPropertyValue
+End Function
+
 ' Open an existing sheet 
 Function openExisting(fname)
 	Set props = CreateObject("Scripting.Dictionary")
 	Set sm = CreateObject("com.sun.star.ServiceManager")
-	Set d = sm.CreateInstance("com.sun.star.frame.Desktop")
-	Dim arg()
-	Set w = d.loadComponentFromURL(ConvertToURL(fname), "_blank", 0, arg)
-	d.getCurrentFrame().getContainerWindow().setVisible(False) ' todo : better way to do that
+	Set d = sm.CreateInstance("com.sun.star.frame.Desktop")	
+	Set w = d.loadComponentFromURL(ConvertToURL(fname), "_blank", 0, Array(getBeanProperty("Hidden", True)))
 	props.Add "sm", sm
 	props.Add "d", d
 	props.Add "w", w
