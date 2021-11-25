@@ -1,3 +1,17 @@
+Set planMakerOutputFmts = CreateObject("Scripting.Dictionary")
+planMakerOutputFmts.Add "pmdx", 0 		' Document (the default value)
+planMakerOutputFmts.Add "pmvx", 1 		' Document template
+planMakerOutputFmts.Add "html", 8 		' HTML
+'those are not well supported
+planMakerOutputFmts.Add "xls", 3 		' Excel 5.0/7.0
+planMakerOutputFmts.Add "xlt", 4 		' Excel template
+'extra line
+'planMakerOutputFmts.Add "dbf", 10 		' dBASE database with Windows character set
+'OLE call fail
+'planMakerOutputFmts.Add "slk", 5 		' Sylk
+'planMakerOutputFmts.Add "txt", 20		' Text file with UTF8 character set
+'non sense
+'planMakerOutputFmts.Add "rtf", 6 		' Rich Text Format
 
 ' isheet find
 ' return 1..n space occuped in the array or -1 in case of error
@@ -203,7 +217,7 @@ End Function
 ' Write the sheet to the storage
 Function sheetWrite(o, f)
 	f = getAbsoluteFilenameFromRelative(f)
-	o("pm").ActiveWorkbook.SaveAs f
+	o("pm").ActiveWorkbook.SaveAs f, planMakerOutputFmts(onlyExtName(f))
 End Function
 
 ' Close the current instance of excel
@@ -218,21 +232,16 @@ End Function
 
 ' Get avaliable extension type
 Function getAvaliableExtensions() 
-	Dim exts(0)
+	ReDim exts(0)
 	exts(0) = "pmdx"
-		IF FALSE THEN
-	exts(1) = "dbf"		'dBase
-	exts(2) = "dif"		'Data Interchange Format
-	exts(3) = "pmd"
-	exts(4) = "pmv"
-	exts(5) = "pmvx"
-	exts(6) = "slk"		'SYLK
-	exts(7) = "xls"		'Microsoft Excel 97-2003
-	exts(8) = "xlt"		'Microsoft Excel 97-2003 Template		
-		END IF
+	FOR EACH k IN planMakerOutputFmts
+		if not k=exts(0) then
+			ReDim Preserve exts(UBound(exts)+1)
+			exts(UBound(exts)) = k
+		end if
+	NEXT
 	getAvaliableExtensions = exts
 End Function
-
 
 
 
