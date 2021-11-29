@@ -1,4 +1,3 @@
-'aaa
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 'Library to extract informations from computer
 'It is not oriented to diagnose computers but give an overview of it's features
