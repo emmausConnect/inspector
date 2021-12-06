@@ -227,9 +227,11 @@ Function sheetEntryFromThisPC(sheet, line)
     Dim thisPC
     Set thisPC = CreateObject("Scripting.Dictionary")
     thisPC.Add positions("cpu"), getCPU()
+	thisPC.Add positions("cpu_indice"), getCPUindice()
+	thisPC.Add positions("type_materiel"), getMaterielType()
     thisPC.Add positions("mem"), getInstalledRAMgo()
     thisPC.Add positions("size_disk"), Round(getDiskSpaceGo(), 2)
-
+	thisPC.Add positions("type_disk"), getDiskType()
     strComputer = "."
     Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
     Set colItems = objWMIService.ExecQuery("Select * from Win32_ComputerSystemProduct",,48)
