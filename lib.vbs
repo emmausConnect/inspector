@@ -7,6 +7,102 @@
 Dim strComputer
 strComputer = "."
 Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
+
+' Get a string describing the type of disk used inside this computer
+' https://www.tek-tips.com/viewthread.cfm?qid=1804214
+' https://wutils.com/wmi/root/microsoft/windows/storage/msft_physicaldisk/vbscript-samples.html
+' https://docs.microsoft.com/en-us/previous-versions/windows/desktop/stormgmt/msft-physicaldisk
+Function getDiskType()
+	'https://wutils.com/wmi/
+	Dim oWMI, Instances, Instance
+	
+	'Get base WMI object, "." means computer name (local)
+	Set oWMI = GetObject("WINMGMTS:\\.\ROOT\Microsoft\Windows\Storage")
+	
+	'Get instances of MSFT_PhysicalDisk - all instances of this class and derived classes 
+	'Set Instances = oWMI.InstancesOf("MSFT_PhysicalDisk")
+	
+	'Get instances of MSFT_PhysicalDisk 
+	Set Instances = oWMI.InstancesOf("MSFT_PhysicalDisk", 1)
+	
+	getDiskType = "Unspecified"
+	'Enumerate instances  
+	For Each Instance In Instances 
+	  'Do something with the instance
+	  Select Case Instance.MediaType
+                Case 3
+                    getDiskType = "HDD"
+                Case 4
+                    getDiskType = "SSD"
+                Case 5
+                    getDiskType = "SCM"
+		Case 17
+		    getDiskType = "NVMe SSD"
+            End Select
+	Next 'Instance
+End Function
+
+' Text to describe which type of hardware we'r on
+Function getMaterielType()
+	getMaterielType = "PC"
+	if isTouchHardware() then
+		getMaterielType = "Tablette"
+	end if
+End Function
+
+' Test if this computer is a touch hardware
+Function isTouchHardware()
+	Dim res
+	res = False
+	Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_PnPEntity")
+	For Each objItem In colItems
+    		If InStr(1, objItem.Description , "touch", 1) > 0 Then
+			isTouchHardware = True
+		End If
+	Next
+End Function
+
+' Get CPU indice from cpu benchmark
+Function getCPUindice()
+	Dim res
+	res = getCPUbenchmark(getCPUnameForCB())
+	getCPUindice = res
+End Function
+
+' Get cpu indice from cpu bench mark html file
+Function getCPUindiceFromHTML(myHTML, name)
+	Set oRegExp2 = New RegExp
+	oRegExp2.Pattern = ".*" & name & ".*<span class=.count.>([^<]+)</span>.*"
+	Set matches2 = oRegExp2.Execute(myHTML)
+	getCPUindiceFromHTML = matches2(0).SubMatches(0)
+End Function
+
+' Get cpu benchmark html file from cpu name
+Function getCPUbenchmark(name)
+	Set x = CreateObject("MSXML2.XMLHTTP")
+	x.Open "Get", "https://www.cpubenchmark.net/cpu_lookup.php?cpu=" & urlEncode(name), False
+	x.Send
+	if x.Status = 200 then
+'		Set fso = CreateObject("Scripting.FileSystemObject")
+'		Set file = fso.OpenTextFile("res.txt", 2, True)
+'		file.Write(x.responseText)
+		getCPUbenchmark = getCPUindiceFromHTML(x.ResponseText, name)
+	else
+		MsgBox("cannot reach server, please ensure you'r connected to internet")
+	end if
+End Function
+
+' Get special cpu format for injection in the cpu benchmark
+Function getCPUnameForCB() 
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_Processor",,48)
+	For Each objItem in colItems
+	    getCPUnameForCB = objItem.Name
+	    getCPUnameForCB = reReplaceAll(getCPUnameForCB, "\([^\)]+\)", "")
+  	    getCPUnameForCB = reReplaceAll(getCPUnameForCB, "CPU ", "")
+	    getCPUnameForCB = reReplaceAll(getCPUnameForCB, "@.*$", "")
+	Next
+End Function
+
 ' Display CPU useful informations to consumers
 Function getCPU() 
 	Dim res
@@ -16,6 +112,7 @@ Function getCPU()
 	Next
 	getCPU = res
 End Function
+
 ' Cache memory on the system
 Function getCacheMem()
 	Dim res
@@ -25,6 +122,7 @@ Function getCacheMem()
 	Next
 	getCacheMem = res
 End Function
+
 ' RAM memory installable on the system
 Function getRAM()
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_PhysicalMemoryArray",,48)
@@ -34,6 +132,7 @@ Function getRAM()
 	Next
 	getRam = res
 End Function
+
 ' RAM memory installled on the system
 Function getInstalledRAM()
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_PhysicalMemory",,48)
@@ -128,6 +227,12 @@ Function getDiskInfos()
     getDiskInfos = res
 End Function
 
+
+' url encode some text
+' space become +
+Function urlEncode(text)
+	urlEncode = reReplaceAll(text, " ", "+")
+End Function
 
 ' Get status of the bluetooth Pres, Abs, KO
 Function bluetoothSupported()
@@ -224,6 +329,15 @@ Function reReplace(strString, strPattern, strReplace)
     Set oRegExp = New RegExp
     oRegExp.Pattern = strPattern
     reReplace = oRegExp.Replace(strString, strReplace)
+End Function
+
+' regexp replace all
+Function reReplaceAll(strString, strPattern, strReplace)
+    Dim oRegExp
+    Set oRegExp = New RegExp
+    oRegExp.Global = True
+    oRegExp.Pattern = strPattern
+    reReplaceAll = oRegExp.Replace(strString, strReplace)
 End Function
 
 ' take a char in a string a returns its value
