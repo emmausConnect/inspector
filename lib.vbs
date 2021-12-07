@@ -8,38 +8,149 @@ Dim strComputer
 strComputer = "."
 Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
 
+' Get capacity remaining (from it's design capacity)
+' Windows 2000 and Windows 98 doivent avoir activé APM
+' https://docs.microsoft.com/fr-fr/windows/win32/cimwin32prov/win32-battery
+Function getBatteryCapResid() 
+
+	' [Windows Vista;[
+	getBatteryCapResid = "N.A."
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_Battery",,48)
+	For Each objItem in colItems
+		if Not objItem.FullChargeCapacity=0 then
+			getBatteryCapResid = objItem.FullChargeCapacity
+		end if
+	Next
+
+End Function
+
+
+' Get amount of time that this computer can live on (in min)
+' Windows 2000 and Windows 98 doivent avoir activé APM
+' https://docs.microsoft.com/fr-fr/windows/win32/cimwin32prov/win32-battery
+Function getBatteryAmountTimeExpected()
+
+	getBatteryAmountTimeExpected = "N.A."
+	
+	' [Windows Vista;[
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_Battery",,48)
+	For Each objItem in colItems
+		getBatteryAmountTimeExpected = objItem.ExpectedLife
+	Next
+End Function
+
+' Test presence of CDROM on this computer
+Function getCDROMinfos()
+
+	getCDROMinfos = "Abs"
+
+	' [Windows Vista;[
+	Set items = objWMIService.ExecQuery("Select * From Win32_CDROMDrive",,48)
+	for each item in items
+		getCDROMinfos = "Pres"
+	next
+
+End Function
+
+' Get status of the bluetooth Pres, Abs, KO
+' https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/hh968170(v=vs.85)
+Function bluetoothSupported()
+	
+	bluetoothSupported = "Abs"
+
+	' 0. [Windows Vista;[
+	Set colItems = objWMIService.ExecQuery("Select * From Win32_NetworkAdapter")
+	For Each objItem in colItems
+		If objItem.AdapterTypeID = 9 And objItem.PhysicalAdapter then ' wireless card
+			Set oRegExp2 = New RegExp
+			oRegExp2.Pattern = ".*[Bb]lue[Tt]ooth.*"
+			if oRegExp2.Test(objItem.ProductName) Or oRegExp2.Test(objItem.Description) then
+				bluetoothSupported = "Pres"
+			end if
+		end if
+	Next
+
+	' 1. [Windows 8;[
+	Err.Clear
+	On Error Resume Next
+	Set newSpace = GetObject("winmgmts:\\" & strComputer & "\root\StandardCimv2")
+	If Err.Number=0 Then
+		Set items = newSpace.ExecQuery("select Name, InterfaceName, InterfaceType, NdisPhysicalMedium from MSFT_NetAdapter where ConnectorPresent=1")
+		for each item in items
+			if item.NdisPhysicalMedium=10 then
+				bluetoothSupported = "Pres"
+			end if
+		next
+	end if
+	On Error Goto 0
+
+End Function
+
+' Check if ethernet port is present
+' https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/hh968170(v=vs.85)
+' https://askcodez.com/determiner-le-type-de-carte-reseau-via-wmi.html
+Function ethernetPort() 
+
+	ethernetPort="Abs"
+
+	' 0. [Windows Vista;[
+	Set colItems = objWMIService.ExecQuery("Select * From Win32_NetworkAdapter")
+	For Each objItem in colItems
+		If objItem.AdapterTypeID=0 And objItem.PhysicalAdapter then ' Ethernet 802,3 device
+			ethernetPort="Pres"			
+		end if
+	Next
+
+	' 1. [Windows 8;[
+	On Error Resume Next
+	Err.Clear
+	Set newSpace = GetObject("winmgmts:\\" & strComputer & "\root\StandardCimv2")
+	If Err.Number=0 Then
+		Set items = newSpace.ExecQuery("select Name, InterfaceName, InterfaceType, LinkTechnology, NdisPhysicalMedium from MSFT_NetAdapter where ConnectorPresent=1")
+		For Each item in items
+			if item.InterfaceType=6 and ( item.NdisPhysicalMedium=0 or item.NdisPhysicalMedium=14 ) then
+				ethernetPort="Pres"
+			end if
+		Next
+	end if
+	On Error Goto 0
+
+End Function
+
 ' Get a string describing the type of disk used inside this computer
 ' https://www.tek-tips.com/viewthread.cfm?qid=1804214
 ' https://wutils.com/wmi/root/microsoft/windows/storage/msft_physicaldisk/vbscript-samples.html
 ' https://docs.microsoft.com/en-us/previous-versions/windows/desktop/stormgmt/msft-physicaldisk
 Function getDiskType()
+	
+	' [Windows 8;[ 
+	' Get information from physical disk
 	'https://wutils.com/wmi/
 	Dim oWMI, Instances, Instance
-	
 	'Get base WMI object, "." means computer name (local)
 	Set oWMI = GetObject("WINMGMTS:\\.\ROOT\Microsoft\Windows\Storage")
-	
-	'Get instances of MSFT_PhysicalDisk - all instances of this class and derived classes 
-	'Set Instances = oWMI.InstancesOf("MSFT_PhysicalDisk")
-	
+	On Error Resume Next
+	Err.Clear
 	'Get instances of MSFT_PhysicalDisk 
 	Set Instances = oWMI.InstancesOf("MSFT_PhysicalDisk", 1)
+	if Err.Number=0 then
+		getDiskType = "Unspecified"
+		'Enumerate instances  
+		For Each Instance In Instances 
+	  	'Do something with the instance
+	  	Select Case Instance.MediaType
+			Case 3
+			    getDiskType = "HDD"
+			Case 4
+			    getDiskType = "SSD"
+			Case 5
+			    getDiskType = "SCM"
+			Case 17
+			    getDiskType = "NVMe SSD"
+		    End Select
+		Next 'Instance
+	end if
 	
-	getDiskType = "Unspecified"
-	'Enumerate instances  
-	For Each Instance In Instances 
-	  'Do something with the instance
-	  Select Case Instance.MediaType
-                Case 3
-                    getDiskType = "HDD"
-                Case 4
-                    getDiskType = "SSD"
-                Case 5
-                    getDiskType = "SCM"
-		Case 17
-		    getDiskType = "NVMe SSD"
-            End Select
-	Next 'Instance
 End Function
 
 ' Text to describe which type of hardware we'r on
@@ -52,14 +163,16 @@ End Function
 
 ' Test if this computer is a touch hardware
 Function isTouchHardware()
-	Dim res
-	res = False
+	isTouchHardware = False
+	
+	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_PnPEntity")
 	For Each objItem In colItems
     		If InStr(1, objItem.Description , "touch", 1) > 0 Then
 			isTouchHardware = True
 		End If
 	Next
+	
 End Function
 
 ' Get CPU indice from cpu benchmark
@@ -94,6 +207,8 @@ End Function
 
 ' Get special cpu format for injection in the cpu benchmark
 Function getCPUnameForCB() 
+	
+	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_Processor",,48)
 	For Each objItem in colItems
 	    getCPUnameForCB = objItem.Name
@@ -101,40 +216,46 @@ Function getCPUnameForCB()
   	    getCPUnameForCB = reReplaceAll(getCPUnameForCB, "CPU ", "")
 	    getCPUnameForCB = reReplaceAll(getCPUnameForCB, "@.*$", "")
 	Next
+	
 End Function
 
 ' Display CPU useful informations to consumers
 Function getCPU() 
-	Dim res
+	
+	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_Processor",,48)
 	For Each objItem in colItems
-	    res = res & objItem.Name & " L2 cache " & objItem.L2CacheSize & "Mo" & vbCrLf
+	    getCPU = getCPU & objItem.Name & " L2 cache " & objItem.L2CacheSize & "Mo" & vbCrLf
 	Next
-	getCPU = res
+	
 End Function
 
 ' Cache memory on the system
 Function getCacheMem()
-	Dim res
+	
+	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_CacheMemory",,48)
 	For Each objItem in colItems    
-	    res = res & objItem.Purpose & " " & objItem.InstalledSize & " Mo" & vbCrLf
+	    getCacheMem = getCacheMem & objItem.Purpose & " " & objItem.InstalledSize & " Mo" & vbCrLf
 	Next
-	getCacheMem = res
+
 End Function
 
 ' RAM memory installable on the system
 Function getRAM()
+	
+	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_PhysicalMemoryArray",,48)
-	Dim res
 	For Each objItem in colItems
-		res = res & " maximum installable RAM " & objItem.MaxCapacity & " Ko in " & objItem.MemoryDevices & " slots " & vbCrLf
+		getRAM = getRAM & " maximum installable RAM " & objItem.MaxCapacity & " Ko in " & objItem.MemoryDevices & " slots " & vbCrLf
 	Next
-	getRam = res
+
 End Function
 
 ' RAM memory installled on the system
 Function getInstalledRAM()
+	
+	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_PhysicalMemory",,48)
 	Dim tot
 	tot = 0
@@ -142,22 +263,23 @@ Function getInstalledRAM()
 		tot = tot + objItem.Capacity
 	Next
 	tot = tot / 1000000
-	Dim res
-	res = res & "installed RAM quantity " & tot & " Mo"
+	getInstalledRAM = getInstalledRAM & "installed RAM quantity " & tot & " Mo"
 	Set colItems2 = objWMIService.ExecQuery("Select * from Win32_PhysicalMemory",,48)
 	Dim old
 	For Each objItem in colItems2
 		IF old=objItem.Speed THEN
 		ELSE
-			res = res & " " & objItem.Speed & "Mhz"
+			getInstalledRAM = getInstalledRAM & " " & objItem.Speed & "Mhz"
 			old = objItem.Speed
 		END IF
 	Next
-	getInstalledRAM = res
+	
 End Function
 
 ' RAM memory installled on the system
 Function getInstalledRAMgo()
+	
+	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_PhysicalMemory",,48)
 	Dim tot
 	tot = 0
@@ -166,20 +288,24 @@ Function getInstalledRAMgo()
 	Next
 	tot = tot / 1000000000
 	getInstalledRAMgo = Round(tot, 3)
+	
 End Function
 
 ' Get softwares installed on this computer
 Function getInstalledSoftware()
-    Set colItems = objWMIService.ExecQuery("Select * from Win32_Product",,48)
-    Dim res
-    For Each objItem in colItems
-	res = res & objItem.Name & vbCrLf
-    Next
-    getInstalledSoftware = res
+
+	' [Windows XP;[
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_Product",,48)
+	For Each objItem in colItems
+		getInstalledSoftware = getInstalledSoftware & objItem.Name & vbCrLf
+	Next
+	
 End Function
 
 ' Get connectivity infos
 Function getConnectivity()
+	
+	' [Windows Vista;[
     Dim tot
     tot = 0
     Set colItems = objWMIService.ExecQuery("Select * from Win32_USBController",,48)
@@ -187,21 +313,27 @@ Function getConnectivity()
 	tot = tot + 1
     Next
     getConnectivity = "" & tot & " USB ports" & vbCrLf
+	
 End Function
 
 ' Video card
 Function getVideoCard()
+	
+	' [Windows Vista;[
     Set colItems = objWMIService.ExecQuery("Select * from Win32_VideoController",,48)
     Dim res
     For Each objItem in colItems
 	res = res & objItem.Name & " " & objItem.AdapterRAM/1000000000 & " Go" & vbClRf
     Next
     getVideo = res
+	
 End Function
 
 ' Get disk space avaliable go
 ' WARNING : if there is any network volumes they will also be counted
 Function getDiskSpaceGo()
+	
+	' [Windows Vista;[
     Dim tot
     tot = 0
     Set colItems = objWMIService.ExecQuery("Select * from Win32_LogicalDisk",,48)
@@ -211,10 +343,13 @@ Function getDiskSpaceGo()
 	END IF
     Next 
     getDiskSpaceGo = tot
+	
 END FUNCTION
 
 ' Get disk information
 Function getDiskInfos() 
+	
+	' [Windows Vista;[
     Dim res
     Set colItems = objWMIService.ExecQuery("Select * from Win32_IDEController",,48)
     Dim dCount
@@ -225,6 +360,7 @@ Function getDiskInfos()
     res = res & "Disk slots " & dCount & vbClRf
     res = res & ", amount of space : " & Round(getDiskSpaceGo(), 2) & "Go" & vbClRf
     getDiskInfos = res
+	
 End Function
 
 
@@ -234,24 +370,37 @@ Function urlEncode(text)
 	urlEncode = reReplaceAll(text, " ", "+")
 End Function
 
-' Get status of the bluetooth Pres, Abs, KO
-Function bluetoothSupported()
-	bluetoothSupported = "Abs"
-	Set colItems = objWMIService.ExecQuery("Select * From Win32_NetworkProtocol")
-	For Each objItem in colItems
-	    If InStr(objItem.Name, "Bluetooth") Then
-		bluetoothSupported = "Pres"
-		Exit For
-	    End If
-	Next
-End Function
-
-' Get screen resolution
+' Get screen resolution in pixels (the amount of pixel in the current screen).
+' https://docs.microsoft.com/fr-fr/windows/win32/cimwin32prov/win32-videocontroller
+' https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/cim-desktopmonitor
 Function getScreenResolutionPx()
+	Dim w(1), h(1)
+
+	' 0. [Windows Vista;[ Get current dimensions in pixels
 	Set colItems = objWMIService.ExecQuery( "SELECT * FROM Win32_VideoController" )
 	For Each objItem In colItems
-		getScreenResolutionPx = objItem.CurrentHorizontalResolution & " x " & objItem.CurrentVerticalResolution
+		w(0) = objItem.CurrentHorizontalResolution
+		h(0) = objItem.CurrentVerticalResolution
 	Next
+
+	' 1. [Windows Vista;[ Get dimensions in pixels from supported source mode
+	Set specialWMIService = GetObject("winmgmts:\\.\root\WMI")
+	Set colItems = specialWMIService.ExecQuery("Select * From WmiMonitorListedSupportedSourceModes")
+	For Each objItem in colItems
+		w(1) = objItem.MonitorSourceModes(0).HorizontalActivePixels 
+		h(1) = objItem.MonitorSourceModes(0).VerticalActivePixels
+	next
+
+	Dim wmax, hmax
+	wmax = -1
+	hmax = -1
+	for a = 0 to UBound(w)
+		if wmax=-1 Or hmax=-1 Or ( hmax < h(a) And wmax < w(a)) then
+			wmax = w(a)
+			hmax = h(a)
+			getScreenResolutionPx = wmax & "x" & hmax
+		end if
+	next
 End Function
 
 ' get current date eg 14/02/2021 10:00
@@ -263,6 +412,8 @@ End Function
 
 ' Format : MANUFACT + MODELE + CPU FREQ + RAM
 Function getNomComplet()
+	
+	' [Windows Vista;[
 	Dim man, model
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_ComputerSystemProduct",,48)
 	For Each objItem in colItems
@@ -270,6 +421,7 @@ Function getNomComplet()
 		model = objItem.Version
 	Next
 	getNomComplet = man & " " & model & " stockage " & Round(getDiskSpaceGo()) & "Go RAM " & Round(getInstalledRAMgo()) & "Go"
+	
 End Function
 
 ' Redim preserve on multidim arrays without out of range exception
