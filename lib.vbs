@@ -14,6 +14,7 @@ Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
 Function getBatteryCapResid() 
 
 	' [Windows Vista;[
+	Dim objItem
 	getBatteryCapResid = "N.A."
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_Battery",,48)
 	For Each objItem in colItems
@@ -33,6 +34,7 @@ Function getBatteryAmountTimeExpected()
 	getBatteryAmountTimeExpected = "N.A."
 	
 	' [Windows Vista;[
+	Dim objItem
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_Battery",,48)
 	For Each objItem in colItems
 		getBatteryAmountTimeExpected = objItem.ExpectedLife
@@ -45,6 +47,7 @@ Function getCDROMinfos()
 	getCDROMinfos = "Abs"
 
 	' [Windows Vista;[
+	Dim item
 	Set items = objWMIService.ExecQuery("Select * From Win32_CDROMDrive",,48)
 	for each item in items
 		getCDROMinfos = "Pres"
@@ -59,6 +62,7 @@ Function bluetoothSupported()
 	bluetoothSupported = "Abs"
 
 	' 0. [Windows Vista;[
+	Dim objItem, item
 	Set colItems = objWMIService.ExecQuery("Select * From Win32_NetworkAdapter")
 	For Each objItem in colItems
 		If objItem.AdapterTypeID = 9 And objItem.PhysicalAdapter then ' wireless card
@@ -94,6 +98,7 @@ Function ethernetPort()
 	ethernetPort="Abs"
 
 	' 0. [Windows Vista;[
+	Dim objItem, item
 	Set colItems = objWMIService.ExecQuery("Select * From Win32_NetworkAdapter")
 	For Each objItem in colItems
 		If objItem.AdapterTypeID=0 And objItem.PhysicalAdapter then ' Ethernet 802,3 device
@@ -166,6 +171,7 @@ Function isTouchHardware()
 	isTouchHardware = False
 	
 	' [Windows Vista;[
+	Dim objItem
 	Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_PnPEntity")
 	For Each objItem In colItems
     		If InStr(1, objItem.Description , "touch", 1) > 0 Then
@@ -209,6 +215,7 @@ End Function
 Function getCPUnameForCB() 
 	
 	' [Windows Vista;[
+	Dim objItem
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_Processor",,48)
 	For Each objItem in colItems
 	    getCPUnameForCB = objItem.Name
@@ -223,6 +230,7 @@ End Function
 Function getCPU() 
 	
 	' [Windows Vista;[
+	Dim objItem
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_Processor",,48)
 	For Each objItem in colItems
 	    getCPU = getCPU & objItem.Name & " L2 cache " & objItem.L2CacheSize & "Mo" & vbCrLf
@@ -234,6 +242,7 @@ End Function
 Function getCacheMem()
 	
 	' [Windows Vista;[
+	Dim objItem
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_CacheMemory",,48)
 	For Each objItem in colItems    
 	    getCacheMem = getCacheMem & objItem.Purpose & " " & objItem.InstalledSize & " Mo" & vbCrLf
@@ -245,6 +254,7 @@ End Function
 Function getRAM()
 	
 	' [Windows Vista;[
+	Dim objItem
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_PhysicalMemoryArray",,48)
 	For Each objItem in colItems
 		getRAM = getRAM & " maximum installable RAM " & objItem.MaxCapacity & " Ko in " & objItem.MemoryDevices & " slots " & vbCrLf
@@ -265,7 +275,7 @@ Function getInstalledRAM()
 	tot = tot / 1000000
 	getInstalledRAM = getInstalledRAM & "installed RAM quantity " & tot & " Mo"
 	Set colItems2 = objWMIService.ExecQuery("Select * from Win32_PhysicalMemory",,48)
-	Dim old
+	Dim old, objItem
 	For Each objItem in colItems2
 		IF old=objItem.Speed THEN
 		ELSE
@@ -281,7 +291,7 @@ Function getInstalledRAMgo()
 	
 	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_PhysicalMemory",,48)
-	Dim tot
+	Dim tot, objItem
 	tot = 0
 	For Each objItem in colItems
 		tot = tot + objItem.Capacity
@@ -295,6 +305,7 @@ End Function
 Function getInstalledSoftware()
 
 	' [Windows XP;[
+	Dim objItem
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_Product",,48)
 	For Each objItem in colItems
 		getInstalledSoftware = getInstalledSoftware & objItem.Name & vbCrLf
@@ -302,30 +313,34 @@ Function getInstalledSoftware()
 	
 End Function
 
-' Get connectivity infos
-Function getConnectivity()
+' Get the number of usb ports on the system
+Function getNumberUSBports() 
 	
 	' [Windows Vista;[
-    Dim tot
-    tot = 0
-    Set colItems = objWMIService.ExecQuery("Select * from Win32_USBController",,48)
-    For Each o in colItems
-	tot = tot + 1
-    Next
-    getConnectivity = "" & tot & " USB ports" & vbCrLf
+	Dim o
+    	getNumberUSBports = 0
+    	Set colItems = objWMIService.ExecQuery("Select * from Win32_USBController",,48)
+    	For Each o in colItems
+		getNumberUSBports = getNumberUSBports + 1
+    	Next	
 	
+End Function
+
+' Get connectivity infos
+Function getConnectivity()
+    getConnectivity = "" & getNumberUSBports() & " USB ports" & vbCrLf
 End Function
 
 ' Video card
 Function getVideoCard()
 	
 	' [Windows Vista;[
-    Set colItems = objWMIService.ExecQuery("Select * from Win32_VideoController",,48)
-    Dim res
-    For Each objItem in colItems
-	res = res & objItem.Name & " " & objItem.AdapterRAM/1000000000 & " Go" & vbClRf
-    Next
-    getVideo = res
+    	Set colItems = objWMIService.ExecQuery("Select * from Win32_VideoController",,48)
+	Dim res, objItem
+    	For Each objItem in colItems
+		res = res & objItem.Name & " " & objItem.AdapterRAM/1000000000 & " Go" & vbClRf
+    	Next
+    	getVideo = res
 	
 End Function
 
@@ -334,15 +349,15 @@ End Function
 Function getDiskSpaceGo()
 	
 	' [Windows Vista;[
-    Dim tot
-    tot = 0
-    Set colItems = objWMIService.ExecQuery("Select * from Win32_LogicalDisk",,48)
-    For Each objItem in colItems
-	If objItem.DriveType=3 THEN
-		tot = tot + (objItem.Size/1000000000)
-	END IF
-    Next 
-    getDiskSpaceGo = tot
+	Dim tot, objItem
+    	tot = 0
+    	Set colItems = objWMIService.ExecQuery("Select * from Win32_LogicalDisk",,48)
+    	For Each objItem in colItems
+		If objItem.DriveType=3 THEN
+			tot = tot + (objItem.Size/1000000000)
+		END IF
+    	Next 
+    	getDiskSpaceGo = tot
 	
 END FUNCTION
 
@@ -350,16 +365,16 @@ END FUNCTION
 Function getDiskInfos() 
 	
 	' [Windows Vista;[
-    Dim res
-    Set colItems = objWMIService.ExecQuery("Select * from Win32_IDEController",,48)
-    Dim dCount
-    dCount = 0
-    For Each objItem in colItems
-	dCount = dCount + 1
-    Next
-    res = res & "Disk slots " & dCount & vbClRf
-    res = res & ", amount of space : " & Round(getDiskSpaceGo(), 2) & "Go" & vbClRf
-    getDiskInfos = res
+    	Dim res
+    	Set colItems = objWMIService.ExecQuery("Select * from Win32_IDEController",,48)
+	Dim dCount, objItem
+    	dCount = 0
+    	For Each objItem in colItems
+		dCount = dCount + 1
+   	Next
+    	res = res & "Disk slots " & dCount & vbClRf
+    	res = res & ", amount of space : " & Round(getDiskSpaceGo(), 2) & "Go" & vbClRf
+    	getDiskInfos = res
 	
 End Function
 
@@ -403,6 +418,13 @@ Function getScreenResolutionPx()
 	next
 End Function
 
+' get current date eg 14/02/2021
+Function curDate2()
+	Dim dt
+	dt=now
+	curDate2 = day(dt) & "/" & month(dt) & "/" & year(dt)
+End Function
+
 ' get current date eg 14/02/2021 10:00
 Function curDate()
 	Dim dt
@@ -410,17 +432,40 @@ Function curDate()
 	curDate = day(dt) & "/" & month(dt) & "/" & year(dt) & " " & hour(dt) & ":" & minute(dt)
 End Function
 
+' computer model : MANUFACT
+Function getMarque()
+	
+	' [Windows Vista;[
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_ComputerSystemProduct",,48)
+	For Each objItem in colItems
+		getMarque = objItem.Vendor
+	Next
+	
+End Function
+
+' computer model : MANUFACT + MODELE
+Function getModel()
+	
+	' [Windows Vista;[
+	Dim objItem
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_ComputerSystemProduct",,48)
+	For Each objItem in colItems
+		getModel = objItem.Version
+	Next
+	
+End Function
+
 ' Format : MANUFACT + MODELE + CPU FREQ + RAM
 Function getNomComplet()
 	
 	' [Windows Vista;[
-	Dim man, model
+	Dim man, model, objItem
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_ComputerSystemProduct",,48)
 	For Each objItem in colItems
 		man = objItem.Vendor
 		model = objItem.Version
 	Next
-	getNomComplet = man & " " & model & " stockage " & Round(getDiskSpaceGo()) & "Go RAM " & Round(getInstalledRAMgo()) & "Go"
+	getNomComplet = getMarque() & " " & getModel() & " stockage " & Round(getDiskSpaceGo()) & "Go RAM " & Round(getInstalledRAMgo()) & "Go"
 	
 End Function
 
