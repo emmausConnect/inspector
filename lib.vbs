@@ -25,6 +25,31 @@ Function getBatteryCapResid()
 
 End Function
 
+' Test if a physical keyboard is present.
+' Peripherical keyboard are not taken in account.
+Function getKeyboard()
+
+	getKeyboard = "Abs"
+
+	' [Windows Vista;[
+	Dim objItem
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_Keyboard")
+	For Each objItem in colItems
+		IF InStr(objItem.Description,"USB") THEN
+		ELSE
+			getKeyboard = "Pres"
+		end if
+	Next
+
+End Function
+
+' Try to guess a string to describe alim chargeur.
+Function guessAlimChargeur()
+	guessAlimChargeur = getBatteryCapResid()
+	if not(guessAlimChargeur = "N.A.") then
+		guessAlimChargeur = ""
+	end if		
+End Function
 
 ' Get amount of time that this computer can live on (in min)
 ' Windows 2000 and Windows 98 doivent avoir activé APM
