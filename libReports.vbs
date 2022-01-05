@@ -226,6 +226,8 @@ End Function
 Function sheetEntryFromThisPC(sheet, line)
     Dim thisPC
     Set thisPC = CreateObject("Scripting.Dictionary")
+	thisPC.Add positions("clavier_pc_fixe"), getKeyboard()
+	thisPC.Add positions("alim_chargeur"), guessAlimChargeur()
     thisPC.Add positions("cpu"), getCPU()
 	thisPC.Add positions("cpu_indice"), getCPUindice()
 	thisPC.Add positions("type_materiel"), getMaterielType()
