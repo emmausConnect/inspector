@@ -25,6 +25,26 @@ Function getBatteryCapResid()
 
 End Function
 
+' Get a string describing the mouse currently connected to computer.
+Function getMouseStr()
+
+	getMouseStr = ""
+
+	' [Windows Vista;[
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_PointingDevice",,48)
+	For Each objItem in colItems
+		if objItem.PointingType=3 or objItem.PointingType=9 then
+			if objItem.ConfigManagerErrorCode=0 then
+				getMouseStr = "Pres"
+				exit function
+			else
+				getMouseStr = "KO"
+			end if
+		end if
+	Next
+
+End function
+
 ' Test if a physical keyboard is present.
 ' Peripherical keyboard are not taken in account.
 Function getKeyboard()
@@ -37,7 +57,12 @@ Function getKeyboard()
 	For Each objItem in colItems
 		IF InStr(objItem.Description,"USB") THEN
 		ELSE
-			getKeyboard = "Pres"
+			IF objItem.ConfigManagerErrorCode=0 THEN
+				getKeyboard = "Pres"
+				exit function
+			ELSE
+				getKeyboard = "KO"
+			end IF
 		end if
 	Next
 
@@ -75,7 +100,12 @@ Function getCDROMinfos()
 	Dim item
 	Set items = objWMIService.ExecQuery("Select * From Win32_CDROMDrive",,48)
 	for each item in items
-		getCDROMinfos = "Pres"
+		if item.ConfigManagerErrorCode=0 then
+			getCDROMinfos = "Pres"
+			exit function
+		else
+			getCDROMinfos = "KO"
+		end if
 	next
 
 End Function
@@ -94,7 +124,12 @@ Function bluetoothSupported()
 			Set oRegExp2 = New RegExp
 			oRegExp2.Pattern = ".*[Bb]lue[Tt]ooth.*"
 			if oRegExp2.Test(objItem.ProductName) Or oRegExp2.Test(objItem.Description) then
-				bluetoothSupported = "Pres"
+				if objItem.ConfigManagerUserConfig=0 then
+					bluetoothSupported = "Pres"
+					exit function
+				else
+					bluetoothSupported = "KO"
+				end if
 			end if
 		end if
 	Next
@@ -107,7 +142,12 @@ Function bluetoothSupported()
 		Set items = newSpace.ExecQuery("select Name, InterfaceName, InterfaceType, NdisPhysicalMedium from MSFT_NetAdapter where ConnectorPresent=1")
 		for each item in items
 			if item.NdisPhysicalMedium=10 then
-				bluetoothSupported = "Pres"
+				if item.ConfigManagerUserConfig=0 then
+					bluetoothSupported = "Pres"
+					exit function
+				else
+					bluetoothSupported = "KO"
+				end if
 			end if
 		next
 	end if
@@ -186,6 +226,9 @@ End Function
 ' Text to describe which type of hardware we'r on
 Function getMaterielType()
 	getMaterielType = "PC"
+	if not(guessAlimChargeur = "N.A.") then
+		getMaterielType = "PC Portable"
+	end if
 	if isTouchHardware() then
 		getMaterielType = "Tablette"
 	end if
@@ -202,6 +245,14 @@ Function isTouchHardware()
     		If InStr(1, objItem.Description , "touch", 1) > 0 Then
 			isTouchHardware = True
 		End If
+	Next
+	
+	' [Windows Vista;[
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_PointingDevice",,48)
+	For Each objItem in colItems
+		if objItem.PointingType=7 or objItem.PointingType=8 then
+			isTouchHardware = True
+		end if
 	Next
 	
 End Function
@@ -868,3 +919,40 @@ Function Bin2Dec(pBinString)
         End Select 
     Next
 End Function
+
+Dim ConfigManagerErrorCodeInfo
+Set ConfigManagerErrorCodeInfo = CreateObject("Scripting.Dictionary")
+ConfigManagerErrorCodeInfo.Add 0, "This device is working properly. "
+ConfigManagerErrorCodeInfo.Add 1, "This device is not configured correctly. "
+ConfigManagerErrorCodeInfo.Add 2, "Windows cannot load the driver for this device. "
+ConfigManagerErrorCodeInfo.Add 3, "The driver for this device might be corrupted, or your system may be running low on memory or other resources. "
+ConfigManagerErrorCodeInfo.Add 4, "This device is not working properly. One of its drivers or your registry might be corrupted. "
+ConfigManagerErrorCodeInfo.Add 5, "The driver for this device needs a resource that Windows cannot manage. "
+ConfigManagerErrorCodeInfo.Add 6, "The boot configuration for this device conflicts with other devices. "
+ConfigManagerErrorCodeInfo.Add 7, "Cannot filter. "
+ConfigManagerErrorCodeInfo.Add 8, "The driver loader for the device is missing. "
+ConfigManagerErrorCodeInfo.Add 9, "This device is not working properly because the controlling firmware is reporting the resources for the device incorrectly. "
+ConfigManagerErrorCodeInfo.Add 10, "This device cannot start. "
+ConfigManagerErrorCodeInfo.Add 11, "This device failed. "
+ConfigManagerErrorCodeInfo.Add 12, "This device cannot find enough free resources that it can use. "
+ConfigManagerErrorCodeInfo.Add 13, "Windows cannot verify this device's resources. "
+ConfigManagerErrorCodeInfo.Add 14, "This device cannot work properly until you restart your computer. "
+ConfigManagerErrorCodeInfo.Add 15, "This device is not working properly because there is probably a re-enumeration problem. "
+ConfigManagerErrorCodeInfo.Add 16, "Windows cannot identify all the resources this device uses. "
+ConfigManagerErrorCodeInfo.Add 17, "This device is asking for an unknown resource type. "
+ConfigManagerErrorCodeInfo.Add 18, "Reinstall the drivers for this device. "
+ConfigManagerErrorCodeInfo.Add 19, "Failure using the VxD loader. "
+ConfigManagerErrorCodeInfo.Add 20, "Your registry might be corrupted. "
+ConfigManagerErrorCodeInfo.Add 21, "System failure: Try changing the driver for this device. If that does not work, see your hardware documentation. Windows is removing this device. "
+ConfigManagerErrorCodeInfo.Add 22, "This device is disabled. "
+ConfigManagerErrorCodeInfo.Add 23, "System failure: Try changing the driver for this device. If that doesn't work, see your hardware documentation. "
+ConfigManagerErrorCodeInfo.Add 24, "This device is not present, is not working properly, or does not have all its drivers installed. "
+ConfigManagerErrorCodeInfo.Add 25, "Windows is still setting up this device. "
+ConfigManagerErrorCodeInfo.Add 26, "Windows is still setting up this device. "
+ConfigManagerErrorCodeInfo.Add 27, "This device does not have valid log configuration. "
+ConfigManagerErrorCodeInfo.Add 28, "The drivers for this device are not installed. "
+ConfigManagerErrorCodeInfo.Add 29, "This device is disabled because the firmware of the device did not give it the required resources. "
+ConfigManagerErrorCodeInfo.Add 30, "This device is using an Interrupt Request (IRQ) resource that another device is using. "
+ConfigManagerErrorCodeInfo.Add 31, "This device is not working properly because Windows cannot load the drivers required for this device. "
+
+
