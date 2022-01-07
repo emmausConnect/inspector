@@ -43,6 +43,20 @@ Function getMouseStr()
 		end if
 	Next
 
+	' [Windows Vista;[
+	if getMouseStr="" then
+		Set colItems = objWMIService.ExecQuery("Select * from Win32_PnPEntity",,48)
+		For Each objItem in colItems
+			if objItem.Service="mouhid" then
+				if objItem.ConfigManagerErrorCode=0 then
+					getMouseStr = "Pres"
+				else
+					getMouseStr = "KO"
+				end if
+			end if
+		Next
+	end if
+
 End function
 
 ' Test if a physical keyboard is present.
@@ -193,6 +207,8 @@ End Function
 ' https://docs.microsoft.com/en-us/previous-versions/windows/desktop/stormgmt/msft-physicaldisk
 Function getDiskType()
 	
+	getDiskType = ""
+	
 	' [Windows 8;[ 
 	' Get information from physical disk
 	'https://wutils.com/wmi/
@@ -220,6 +236,27 @@ Function getDiskType()
 		    End Select
 		Next 'Instance
 	end if
+	
+	' [Windows Vista;[
+	IF FALSE THEN
+		Err.Clear
+		On Error Resume Next
+		Set colItems = objWMIService.ExecQuery("Select * from Win32_PnPEntity",,48)
+		For Each objItem in colItems
+			IF InStr(objItem.PNPDeviceID, "\DISK") or InStr(objItem.DeviceID, "\DISK") THEN
+				if objItem.ConfigManagerErrorCode=0 then
+					' Pres of disk
+					' TODO query for objItem.Name on db
+					' eg https://www.ldlc.com/recherche/wdc%20wd5000azlx-08k2ta0/
+					' https://linux-hardware.org/?view=search&vendor=wdc&name=wd5000azlx-08k2ta0
+				end if
+			END IF
+		Next
+		If not(Err.Number=0) then
+			getDiskType = ""
+		end if
+		On Error Goto 0
+	END IF
 	
 End Function
 
@@ -285,6 +322,33 @@ Function getCPUbenchmark(name)
 	else
 		MsgBox("cannot reach server, please ensure you'r connected to internet")
 	end if
+End Function
+
+' Get disk go from html in linux hardware
+Function getDiskGoLHFromHTML(myHTML, vendor, model)
+	Set oRegExp2 = New RegExp
+	oRegExp2.Pattern = ".*<td class=.device.><span class=.found.>([^<]+)</span>[ ]*([0-9kKmMGBgb]+).*"
+	Set matches2 = oRegExp2.Execute(myHTML)
+	getDiskGoLHFromHTML = matches2(0).SubMatches(1)
+End Function
+
+' Get disk go from linux hardware
+Function getDiskGoLH(vendor, model)
+
+	getDiskGoLH = ""
+
+	Dim url
+	url = "https://linux-hardware.org/?view=search&vendor=" & vendor & "&name=" & model
+	MsgBox("q on " & url)
+	Set xhr = CreateObject("MSXML2.XMLHTTP")
+	xhr.Open "Get", url, False
+	xhr.Send
+	if xhr.Status = 200 then
+		getDiskGoLH = getDiskGoLHFromHTML(xhr.ResponseText, vendor, model)
+	else
+		MsgBox("cannot reach server, please ensure you'r connected to internet")
+	end if
+
 End Function
 
 ' Get special cpu format for injection in the cpu benchmark
