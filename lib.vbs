@@ -103,6 +103,7 @@ Function getBatteryAmountTimeExpected()
 	For Each objItem in colItems
 		getBatteryAmountTimeExpected = objItem.ExpectedLife
 	Next
+	
 End Function
 
 ' Test presence of CDROM on this computer
@@ -243,7 +244,7 @@ Function getDiskType()
 		On Error Resume Next
 		Set colItems = objWMIService.ExecQuery("Select * from Win32_PnPEntity",,48)
 		For Each objItem in colItems
-			IF InStr(objItem.PNPDeviceID, "\DISK") or InStr(objItem.DeviceID, "\DISK") THEN
+			If objItem.Service = "disk" then
 				if objItem.ConfigManagerErrorCode=0 then
 					' Pres of disk
 					' TODO query for objItem.Name on db
@@ -333,13 +334,25 @@ Function getDiskGoLHFromHTML(myHTML, vendor, model)
 End Function
 
 ' Get disk go from linux hardware
-Function getDiskGoLH(vendor, model)
+Function getDiskGoLH(name)
 
+	Dim vendor, model, aux
+	' Extract vendor model from the name
 	getDiskGoLH = ""
+	' split name
+	Set oRegExp2 = New RegExp
+	oRegExp2.Pattern = "([^ ]+)[ ]+([^ ]+)"
+	Set matches2 = oRegExp2.Execute(name)
+	vendor = matches2(0).SubMatches(0)
+	model = matches2(0).SubMatches(1)
+	if Len(vendor) > Len(model) then
+		aux = vendor
+		vendor = model
+		model = aux
+	end if
 
 	Dim url
 	url = "https://linux-hardware.org/?view=search&vendor=" & vendor & "&name=" & model
-	MsgBox("q on " & url)
 	Set xhr = CreateObject("MSXML2.XMLHTTP")
 	xhr.Open "Get", url, False
 	xhr.Send
