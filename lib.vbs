@@ -312,17 +312,24 @@ End Function
 
 ' Get cpu benchmark html file from cpu name
 Function getCPUbenchmark(name)
+	On Error Resume Next
+	Err.Clear
 	Set x = CreateObject("MSXML2.XMLHTTP")
-	x.Open "Get", "https://www.cpubenchmark.net/cpu_lookup.php?cpu=" & urlEncode(name), False
-	x.Send
-	if x.Status = 200 then
-'		Set fso = CreateObject("Scripting.FileSystemObject")
-'		Set file = fso.OpenTextFile("res.txt", 2, True)
-'		file.Write(x.responseText)
-		getCPUbenchmark = getCPUindiceFromHTML(x.ResponseText, name)
+	If Err.Number <> 0 Then
+		' thereis an error with msxml dll loading we cannot get cpu benchmark
 	else
-		MsgBox("cannot reach server, please ensure you'r connected to internet")
+		x.Open "Get", "https://www.cpubenchmark.net/cpu_lookup.php?cpu=" & urlEncode(name), False
+		x.Send
+		if x.Status = 200 then
+'			Set fso = CreateObject("Scripting.FileSystemObject")
+'			Set file = fso.OpenTextFile("res.txt", 2, True)
+'			file.Write(x.responseText)
+			getCPUbenchmark = getCPUindiceFromHTML(x.ResponseText, name)
+		else
+			MsgBox("cannot reach server, please ensure you'r connected to internet")
+		end if
 	end if
+	On Error Goto 0
 End Function
 
 ' Get disk go from html in linux hardware
