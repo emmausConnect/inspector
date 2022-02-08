@@ -44,19 +44,26 @@ End Function
 ' Fetch resource online and put in cache if possible
 ' Return the text of the resource or nothing in case of error
 Function fetch(filename)
+  On Error Resume Next
   Dim fname
   fname = cache(filename)
+  Err.Clear
   Set o = CreateObject("MSXML2.XMLHTTP")
-  o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
-  o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
-  
-  o.send
-  IF o.Status = 200 THEN
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    Set file = fso.OpenTextFile(fname, 2, True)
-    file.Write(o.responseText)
-    fetch = o.responseText
-  END IF
+  If Err.Number <> 0 Then
+	' thereis an error with msxml dll loading we cannot resources from the network
+  ELSE
+	  o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
+	  o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
+	  
+	  o.send
+	  IF o.Status = 200 THEN
+	    Set fso = CreateObject("Scripting.FileSystemObject")
+	    Set file = fso.OpenTextFile(fname, 2, True)
+	    file.Write(o.responseText)
+	    fetch = o.responseText
+	  END IF
+  end if
+  On Error Goto 0
 End Function
 
 Dim fetchProba
