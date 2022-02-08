@@ -69,7 +69,12 @@
             <p>Inspector - Generate reports from this computer</p>
 </td>
 
-		</tr><tr>
+		</tr>
+		<tr>
+			<td>Backend pour générer le tableur:</td>
+			<td><select name="backendChoosedSelect" size="1" onchange="backendChoosed()" multiple="" ></select></td>
+		</tr>
+		<tr>
     <td>Format de sortie:</td>
                  	<td>
                               <select name="fmtsSortie" size="1" onchange="chooseFmt()" multiple="" >
@@ -107,6 +112,7 @@
 
   </div>
   <script language="VBScript" async="" defer="">
+
 Function PickFolder(sStartPath)
     Dim shell, oFldr
     Set shell = CreateObject("Shell.Application")
@@ -167,19 +173,26 @@ End Function
 	' Fetch resource online and put in cache if possible
 	' Return the text of the resource or nothing in case of error
 	Function fetch(filename)
+	    On Error Resume Next
 	    Dim fname
 	    fname = cache(filename)
+	    Err.Clear
 	    Set o = CreateObject("MSXML2.XMLHTTP")
-	    o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
-	    o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
-	    
-	    o.send
-	    IF o.Status = 200 THEN
-		Set fso = CreateObject("Scripting.FileSystemObject")
-		Set file = fso.OpenTextFile(fname, 2, True)
-		file.Write(o.responseText)
-		fetch = o.responseText
-	    END IF
+	    if Err.Number <> 0 then
+	    	' dll loading error
+	    else
+	    	o.open "GET", "https://raw.githubusercontent.com/emmausConnect/inspector/main/" & filename, False
+	    	o.setRequestHeader "Accept", "application/vnd.github.v3.raw" 
+	    	
+	    	o.send
+	    	IF o.Status = 200 THEN
+			Set fso = CreateObject("Scripting.FileSystemObject")
+			Set file = fso.OpenTextFile(fname, 2, True)
+			file.Write(o.responseText)
+			fetch = o.responseText
+		END IF
+	    end if
+	    On Error Goto 0
 	End Function
 
 	Dim fetchProba
@@ -213,18 +226,15 @@ End Function
 	    executeGlobal lib
 	End Function
 
-	Dim outputFilename, outputFile
+	Dim outputFilename, outputFile, extNameForFile
 
        fetchAllFirstIfNeeded()
-
+	   
 	load("lib.vbs")
 	load("libReports.vbs")
-	loadPreferedBackend()
-
-	Dim extNameForFile
-	extNameForFile = getPreferredExtension()
-	initFmtsSortie()
-		
+	initBackend()
+	loadBackendInGUI("Csv")
+	
 	' Function for the gui
 	Function startInspection()
 		if onlyExtName(outFileNameDiv.value)="" then
@@ -281,6 +291,43 @@ End Function
 			else
 				objOpt.Selected = False
 			end if
+		Next
+	End Function
+	
+	Function loadBackendInGUI(backendName)
+		load("lib" & backendName & "Reports.vbs")
+		extNameForFile = getPreferredExtension()
+		Do While fmtsSortie.length > 0
+			fmtsSortie.remove(0)
+		Loop
+		initFmtsSortie()
+	End Function
+	
+	' Triggered when the backend is changed.
+	Function backendChoosed()
+		For i = 0 to backendChoosedSelect.length - 1
+			if backendChoosedSelect(i).Selected then
+				loadBackendInGUI(backendChoosedSelect(i).Value)
+			end if
+		next
+	End Function  
+
+	Function initBackend()
+		Dim arr(3)
+		arr(0) = "Csv"
+		arr(1) = "Excel"
+		arr(2) = "OpenOffice"
+		arr(3) = "PlanMaker"
+		For i = 0 To UBound(arr)
+			Set objOpt = Document.createElement("OPTION")
+			objOpt.Text = arr(i)
+			objOpt.Value = arr(i)
+			if i = 0 then
+				objOpt.Selected = True
+			else
+				objOpt.Selected = False
+			end if
+			backendChoosedSelect.add(objOpt)
 		Next
 	End Function
 
