@@ -78,14 +78,7 @@ Function sheetCreateRowFromHashMap(sheet, line, map)
 End Function
 
 ' Returns -1 if this pc is not in the sheet else 1..n line where the entry has been found
-Function sheetThisPCinSheet(sheet)
-        dim serialNumber
-        strComputer = "."
-        Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
-        Set colItems = objWMIService.ExecQuery("Select * from Win32_OperatingSystem",,48)
-        For Each objItem in colItems
-            serialNumber = objItem.SerialNumber
-	Next
+Function sheetThisPCinSheet(sheet, sno)
 
 	Dim y, res, value, position
 	res = -1
@@ -93,7 +86,7 @@ Function sheetThisPCinSheet(sheet)
 	Do While y<=UBound(sheet)
 		position = positions("no_serie") & y
 		value = csvGetValueForRange(sheet, position)
-		if value=serialNumber then
+		if value=sno then
 			res = y
 			Exit Do
 		end if
@@ -179,7 +172,7 @@ End Function
 Function csvAddValueForRange(sheet, range, value)
     Dim startRow, endRow, startCol, endCol, arr, x, y, tmp
 
-    value = reReplace(value, vbCrLf, "")
+	value = reReplace(value, vbCrLf, "")
 
     ' Gets column, row based on 1..n position
     arr = rangeToArray(range)
@@ -205,7 +198,6 @@ Function csvAddValueForRange(sheet, range, value)
         Loop
         y=y+1
     Loop
-    
     'csvDump(sheet)
 End Function
 
