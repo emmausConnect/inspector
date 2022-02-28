@@ -277,15 +277,6 @@ Function isTouchHardware()
 	isTouchHardware = False
 	
 	' [Windows Vista;[
-	Dim objItem
-	Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_PnPEntity")
-	For Each objItem In colItems
-    		If InStr(1, objItem.Description , "touch", 1) > 0 Then
-			isTouchHardware = True
-		End If
-	Next
-	
-	' [Windows Vista;[
 	Set colItems = objWMIService.ExecQuery("Select * from Win32_PointingDevice",,48)
 	For Each objItem in colItems
 		if objItem.PointingType=7 or objItem.PointingType=8 then
@@ -307,7 +298,7 @@ Function getCPUindiceFromHTML(myHTML, name)
 	Set oRegExp2 = New RegExp
 	oRegExp2.Pattern = ".*" & name & ".*<span class=.count.>([^<]+)</span>.*"
 	Set matches2 = oRegExp2.Execute(myHTML)
-	getCPUindiceFromHTML = matches2(0).SubMatches(0)
+	getCPUindiceFromHTML = reReplaceAll(matches2(0).SubMatches(0), ",", "")
 End Function
 
 ' Get cpu benchmark html file from cpu name
@@ -326,7 +317,7 @@ Function getCPUbenchmark(name)
 '			file.Write(x.responseText)
 			getCPUbenchmark = getCPUindiceFromHTML(x.ResponseText, name)
 		else
-			MsgBox("cannot reach server, please ensure you'r connected to internet")
+			MsgBox("L'indice cpu est indisponible, vous devrez le renseigner manuellement (ex: pas d'internet)")
 		end if
 	end if
 	On Error Goto 0
@@ -457,7 +448,7 @@ Function getInstalledRAMgo()
 		tot = tot + objItem.Capacity
 	Next
 	tot = tot / 1000000000
-	getInstalledRAMgo = Round(tot, 3)
+	getInstalledRAMgo = Round(tot, 1)
 	
 End Function
 
