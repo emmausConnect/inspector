@@ -177,14 +177,7 @@ Function sheetAutoFit(sheet)
 End Function
 
 ' Returns -1 if this pc is not in the sheet else 1..n line where the entry has been found
-Function sheetThisPCinSheet(sheet)
-        dim serialNumber
-        strComputer = "."
-        Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
-        Set colItems = objWMIService.ExecQuery("Select * from Win32_OperatingSystem",,48)
-        For Each objItem in colItems
-            serialNumber = objItem.SerialNumber
-	Next
+Function sheetThisPCinSheet(sheet, serialNumber)
 	Dim res
 	res = -1
 	Set rows = sheet.Rows
