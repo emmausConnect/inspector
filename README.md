@@ -1,6 +1,6 @@
 # Inspector
 inspector pour Emmaüs<br />
-Vous souhaitez créer un rapport d'erreur ? rdv [ici](https://gitreports.com/issue/emmausConnect/inspector).
+<!-- Vous souhaitez créer un rapport d'erreur ? rdv [ici](https://gitreports.com/issue/emmausConnect/inspector). -->
 
 ## Conditions d'utilisation
 Aucunes, le logiciel se débrouille avec ce qui est sur la machine.<br /> <br />
