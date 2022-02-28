@@ -222,8 +222,10 @@ Function sheetOpenOrCreate(fname)
 	end if
 End Function
 
+Dim AA
+AA = False
 ' Create a entry in the sheet from the data found on this computer
-Function sheetEntryFromThisPC(sheet, line)
+Function sheetEntryFromThisPC(sheet, line, serialNumber)
     Dim thisPC
     Set thisPC = CreateObject("Scripting.Dictionary")
 	thisPC.Add positions("souris"), getMouseStr()
@@ -237,6 +239,7 @@ Function sheetEntryFromThisPC(sheet, line)
 	thisPC.Add positions("type_disk"), getDiskType()
 	thisPC.Add positions("dvd"), getCDROMinfos()
 	thisPC.Add positions("cap_res_bat"), getBatteryCapResid()
+
 	thisPC.add positions("auto_bat"), getBatteryAmountTimeExpected()
     strComputer = "."
     Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
@@ -245,38 +248,43 @@ Function sheetEntryFromThisPC(sheet, line)
        thisPC.Add positions("marque"), objItem.Vendor
        thisPC.Add positions("modele"), objItem.Version
     Next
+
     Set colItems = objWMIService.ExecQuery("Select * from Win32_OperatingSystem",,48)
     For Each objItem in colItems
 	thisPC.Add positions("os"), objItem.Caption & "(" & objItem.Version & ")"
-        thisPC.Add positions("no_serie"), objItem.SerialNumber
     Next
-
-    Set objSession = CreateObject("Microsoft.Update.Session")
-    Set objSearcher = objSession.CreateUpdateSearcher
-    Set colHistory = objSearcher.QueryHistory(1, 1)
-    For Each objEntry in colHistory
-       thisPC.Add positions("derniere_maj"), objEntry.Date
-    Next
-
+    thisPC.Add positions("no_serie"), serialNumber
     thisPC.Add positions("bluetooth"), bluetoothSupported()
     thisPC.Add positions("taille_ecran"), getScreenResolutionPx()
     thisPC.Add positions("date_crea_fiche_teck"), curDate()
     thisPC.Add positions("nom_complet"), getNomComplet()
 
+	removeNullsUndefined(thisPC)
     sheetCreateRow sheet, line, thisPC
+	
 End Function
 
-
+' Remove nulls and undefined in case error of detection
+Function removeNullsUndefined(thisPC)
+	For Each k In thisPC.Keys
+		if VarType(thisPC(k))=0 Or VarType(thisPC(k))=1 then
+			thisPC(k) = ""
+		end if
+	Next
+End Function
 
 
 ' Same as sheetNewEntryFromThisPC but update entry if already in (by serial number)
 Function sheetUpdateOrNewEntryFromThisPC(sheet)
+        dim serialNumber
+	serialNumber = InputBox("Entrer le n° d'identification: ")
+
 	Dim line
-	line = sheetThisPCinSheet(sheet)
+	line = sheetThisPCinSheet(sheet, serialNumber)
 	if line=-1 then
-		sheetNewEntryFromThisPC sheet
+		sheetNewEntryFromThisPC sheet, serialNumber
 	else
-		sheetEntryFromThisPC sheet, line
+		sheetEntryFromThisPC sheet, line, serialNumber
 	end if
 	IF TypeName(sheet)="Worksheet" Or TypeName(sheet)="ISheet" THEN
 		Set sheetUpdateOrNewEntryFromThisPC = sheet
@@ -286,10 +294,10 @@ Function sheetUpdateOrNewEntryFromThisPC(sheet)
 End Function
 
 ' Create a new entry in the sheet from the data found on this computer
-Function sheetNewEntryFromThisPC(sheet)
+Function sheetNewEntryFromThisPC(sheet, serialNumber)
 	Dim line
 	line = usedRows(sheet, positions("cpu")) + 1
-	sheetNewEntryFromThisPC = sheetEntryFromThisPC(sheet, line)
+	sheetNewEntryFromThisPC = sheetEntryFromThisPC(sheet, line, serialNumber)
 End Function
 
 ' Get a compatible output format from a given name
